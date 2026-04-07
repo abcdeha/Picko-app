@@ -957,11 +957,14 @@ function loadKakaoSDK(appkey) {
   return new Promise((resolve, reject) => {
     if (typeof kakao !== 'undefined' && kakao.maps?.services) { resolve(); return; }
     const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${appkey}&libraries=services&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appkey}&libraries=services&autoload=false`;
     script.onload = () => {
       kakao.maps.load(() => { _kakaoLoaded = true; resolve(); });
     };
-    script.onerror = () => reject(new Error('SDK 로드 실패'));
+    script.onerror = () => {
+      console.warn('[PICKO] 카카오 SDK 로드 실패 — 도메인 등록 확인 필요');
+      resolve();   // reject 대신 resolve → 이후 JS 계속 실행
+    };
     document.head.appendChild(script);
   });
 }
@@ -1695,14 +1698,19 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initOrders();  // stockItems → orders 파생
 
-  // 카카오 SDK 앱 시작 시 자동 로드
+  // 카카오 SDK 앱 시작 시 자동 로드 (실패해도 앱 계속 실행)
   if (_kakaoAppKey) {
     loadKakaoSDK(_kakaoAppKey)
       .then(() => {
-        _kakaoPS = new kakao.maps.services.Places();
-        console.log('[PICKO] 카카오 지도 준비 완료');
-      })
-      .catch(() => {});
+        try {
+          if (typeof kakao !== 'undefined' && kakao.maps?.services) {
+            _kakaoPS = new kakao.maps.services.Places();
+            console.log('[PICKO] 카카오 지도 준비 완료');
+          }
+        } catch(e) {
+          console.warn('[PICKO] Places 초기화 실패:', e.message);
+        }
+      });
   }
 
   setTimeout(() => {
@@ -1972,10 +1980,11 @@ function searchPlace() {
 
 function renderSearchResults(places, query) {
   const results = document.getElementById('mapSearchResults');
-  const highlight = (str) => str.replace(
-    new RegExp('(' + query.replace(/[.*+?^${}()|[\]\]/g,'\$&') + ')', 'gi'),
-    '<mark>$1</mark>'
-  );
+  const highlight = (str) => {
+    if (!query) return str;
+    const safe = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    return str.replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
+  };
   const emoji = (cat) => {
     if (!cat) return '🏪';
     if (cat.includes('고기') || cat.includes('삼겹') || cat.includes('갈비')) return '🥩';
@@ -2168,7 +2177,17 @@ async function fetchKmaWeather() {
     + `&nx=${CFG.KMA_NX}&ny=${CFG.KMA_NY}`;
 
   console.log('[날씨] 요청 →', baseDate, baseTime);
-  const res  = await fetch(url);
+
+  // 5초 타임아웃 — 응답 없으면 폴백으로 바로 진행
+  const controller = new AbortController();
+  const timeout    = setTimeout(() => controller.abort(), 5000);
+  let res;
+  try {
+    res = await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+
   const json = await res.json();
   const rc   = json?.response?.header?.resultCode;
   if (rc !== '00') throw new Error('resultCode=' + rc + ' ' + json?.response?.header?.resultMsg);
@@ -2237,8 +2256,9 @@ async function loadForecast() {
     weather = await fetchKmaWeather();
     toast('🌤 실시간 날씨 반영 완료');
   } catch(e) {
-    console.warn('[날씨] 폴백:', e.message);
-    toast('날씨 로딩 실패, 기본값 사용');
+    const reason = e.name === 'AbortError' ? '응답 시간 초과' : e.message;
+    console.warn('[날씨] 폴백 사용:', reason);
+    // 날씨 실패해도 예측은 기본값으로 계속 진행 (로딩 스피너 제거)
   }
 
   forecasts = applyWeatherCorrection(MOCK_FORECASTS, weather);
