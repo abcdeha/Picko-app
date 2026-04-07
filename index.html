@@ -1,0 +1,3044 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PICKO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════
+   토스 디자인 시스템
+══════════════════════════════════ */
+:root {
+  --bg:        #f2f4f6;
+  --surface:   #ffffff;
+  --blue:      #3182f6;
+  --blue-light:#ebf3fe;
+  --red:       #f04452;
+  --red-light: #fff0f1;
+  --green:     #20c174;
+  --green-light:#e8faf2;
+  --orange:    #ff7b00;
+  --orange-light:#fff4e6;
+  --text-1:    #191f28;
+  --text-2:    #333d4b;
+  --text-3:    #6b7684;
+  --text-4:    #8b95a1;
+  --text-5:    #b0b8c1;
+  --border:    #e5e8eb;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 스크롤바 숨김 ── */
+::-webkit-scrollbar { display: none; }
+
+/* ══════════════════════════════════
+   상단 헤더
+══════════════════════════════════ */
+.header {
+  background: var(--surface);
+  padding: 14px 20px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid var(--border);
+}
+.header-logo {
+  font-size: 18px; font-weight: 900;
+  color: var(--text-1); letter-spacing: -.5px;
+}
+.header-logo span { color: var(--blue); }
+.header-sub  { font-size: 11px; color: var(--text-4); margin-top: 1px; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.header-icon {
+  width: 24px; height: 24px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2); font-size: 20px;
+}
+.header-badge {
+  position: relative;
+}
+.header-badge::after {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--red); border: 1.5px solid var(--surface);
+}
+
+/* ══════════════════════════════════
+   페이지 / 네비
+══════════════════════════════════ */
+.pages { padding-bottom: calc(64px + var(--safe-bottom)); }
+.page  { display: none; }
+.page.active { display: block; animation: fadeUp .2s ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: var(--safe-bottom);
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 10px 0 8px; gap: 4px;
+  border: none; background: none;
+  cursor: pointer;
+  color: var(--text-5); font-size: 11px; font-weight: 500;
+  font-family: inherit; transition: color .15s;
+}
+.nav-btn.active { color: var(--blue); }
+.nav-icon {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+}
+/* SVG 네비 아이콘 */
+.nav-btn svg { fill: currentColor; }
+
+/* ══════════════════════════════════
+   공통 레이아웃
+══════════════════════════════════ */
+.section { padding: 0 20px; margin-bottom: 8px; }
+.section-title {
+  font-size: 13px; font-weight: 700; color: var(--text-3);
+  padding: 20px 0 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.section-more {
+  font-size: 13px; color: var(--text-4);
+  font-weight: 400; cursor: pointer;
+  display: flex; align-items: center; gap: 2px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.card + .card { margin-top: 8px; }
+
+/* ══════════════════════════════════
+   홈 — 매장 요약 카드
+══════════════════════════════════ */
+.store-card {
+  background: var(--surface);
+  padding: 24px 20px 20px;
+  margin-bottom: 8px;
+}
+.store-greeting {
+  font-size: 13px; color: var(--text-3); font-weight: 500; margin-bottom: 6px;
+}
+.store-name-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+}
+.store-name {
+  font-size: 22px; font-weight: 900; color: var(--text-1); letter-spacing: -.5px;
+}
+.store-tag {
+  font-size: 11px; font-weight: 700; color: var(--blue);
+  background: var(--blue-light); padding: 3px 8px; border-radius: 4px;
+}
+.store-meta { font-size: 13px; color: var(--text-4); }
+
+.today-summary {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-top: 20px;
+}
+.summary-box {
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.summary-label { font-size: 12px; color: var(--text-3); font-weight: 500; margin-bottom: 8px; }
+.summary-value {
+  font-size: 24px; font-weight: 900; color: var(--text-1);
+  letter-spacing: -.5px; line-height: 1;
+}
+.summary-unit { font-size: 13px; font-weight: 500; color: var(--text-3); margin-left: 2px; }
+.summary-diff {
+  font-size: 12px; font-weight: 700; margin-top: 6px;
+}
+.diff-up   { color: var(--red); }
+.diff-down { color: var(--blue); }
+.diff-same { color: var(--text-4); }
+
+/* ══════════════════════════════════
+   날씨 배너
+══════════════════════════════════ */
+.weather-banner {
+  margin: 0 20px 8px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer;
+}
+.weather-icon-wrap {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--blue-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.weather-main { flex: 1; }
+.weather-title { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 3px; }
+.weather-desc  { font-size: 13px; color: var(--text-3); }
+.weather-detail-row {
+  display: flex; gap: 12px; margin-top: 10px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.wd-item { flex: 1; text-align: center; }
+.wd-label { font-size: 11px; color: var(--text-4); margin-bottom: 4px; }
+.wd-val   { font-size: 14px; font-weight: 700; color: var(--text-2); }
+
+/* ══════════════════════════════════
+   예측 리스트 아이템 (토스 스타일)
+══════════════════════════════════ */
+.fc-list { display: flex; flex-direction: column; }
+
+.fc-item {
+  background: var(--surface);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: background .1s;
+  border-bottom: 1px solid var(--border);
+}
+.fc-item:last-child { border-bottom: none; }
+.fc-item:active { background: var(--bg); }
+
+.fc-icon-wrap {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.ic-main  { background: #fff3e0; }
+.ic-side  { background: #e3f2fd; }
+.ic-drink { background: #f3e5f5; }
+
+.fc-info { flex: 1; min-width: 0; }
+.fc-name {
+  font-size: 16px; font-weight: 700; color: var(--text-1);
+  margin-bottom: 3px; letter-spacing: -.3px;
+}
+.fc-sub  { font-size: 13px; color: var(--text-4); }
+
+.fc-right { text-align: right; flex-shrink: 0; }
+.fc-pred  {
+  font-size: 18px; font-weight: 900; letter-spacing: -.5px;
+  margin-bottom: 3px;
+}
+.fc-unit  { font-size: 12px; font-weight: 400; color: var(--text-3); margin-left: 1px; }
+.fc-badge {
+  font-size: 12px; font-weight: 700;
+  padding: 3px 8px; border-radius: 4px;
+  display: inline-block;
+}
+.badge-up   { background: var(--red-light); color: var(--red); }
+.badge-down { background: var(--blue-light); color: var(--blue); }
+.badge-same { background: var(--bg); color: var(--text-4); }
+
+/* ══════════════════════════════════
+   발주 탭
+══════════════════════════════════ */
+.order-header {
+  background: var(--surface);
+  padding: 20px 20px 16px;
+  margin-bottom: 8px;
+}
+.order-total-label { font-size: 13px; color: var(--text-3); font-weight: 500; margin-bottom: 6px; }
+.order-total-count {
+  font-size: 28px; font-weight: 900; color: var(--text-1); letter-spacing: -.5px;
+}
+.order-total-unit { font-size: 16px; font-weight: 700; color: var(--text-3); margin-left: 2px; }
+.order-savings {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 10px;
+  font-size: 13px; font-weight: 700; color: var(--green);
+  background: var(--green-light); padding: 6px 12px; border-radius: 6px;
+}
+
+.order-list { display: flex; flex-direction: column; }
+.order-item {
+  background: var(--surface);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .1s;
+}
+.order-item:last-child { border-bottom: none; }
+.order-item:active { background: var(--bg); }
+
+.order-chk {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; background: var(--surface);
+  cursor: pointer;
+}
+.order-chk.on {
+  background: var(--blue); border-color: var(--blue);
+}
+.order-chk.on::after {
+  content: '';
+  width: 10px; height: 6px;
+  border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translateY(-1px);
+  display: block;
+}
+
+.order-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0; background: var(--bg);
+}
+.order-info { flex: 1; }
+.order-name { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 3px; letter-spacing: -.3px; }
+.order-sub  { font-size: 13px; color: var(--text-4); }
+.order-amount { text-align: right; flex-shrink: 0; }
+.order-qty  { font-size: 20px; font-weight: 900; color: var(--text-1); letter-spacing: -.5px; }
+.order-unit-txt { font-size: 13px; color: var(--text-3); }
+
+/* 수량 조절 */
+.order-amount { text-align: right; flex-shrink: 0; cursor: pointer; }
+.order-qty-row { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+.order-qty-edited { color: var(--blue) !important; }
+.order-edit-badge {
+  font-size: 10px; font-weight: 700; color: var(--blue);
+  background: var(--blue-light); padding: 2px 6px; border-radius: 4px;
+  margin-top: 3px; display: inline-block;
+}
+.qty-stepper {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 20px 20px 8px;
+  background: var(--bg); border-radius: var(--radius-md); padding: 4px;
+}
+.qty-btn {
+  width: 48px; height: 48px; border-radius: var(--radius-sm);
+  border: none; background: var(--surface);
+  font-size: 22px; font-weight: 300; color: var(--text-1);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .1s; flex-shrink: 0;
+}
+.qty-btn:active { background: var(--border); }
+.qty-btn:disabled { color: var(--text-5); }
+.qty-display {
+  flex: 1; text-align: center;
+}
+.qty-display-num {
+  font-size: 36px; font-weight: 900; color: var(--text-1); letter-spacing: -.5px; line-height: 1;
+}
+.qty-display-unit { font-size: 14px; color: var(--text-3); font-weight: 500; margin-top: 2px; }
+.qty-ai-rec {
+  margin: 0 20px 16px;
+  padding: 12px 16px;
+  background: var(--blue-light);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.qty-ai-label { font-size: 13px; color: var(--blue); font-weight: 500; }
+.qty-ai-val   { font-size: 14px; font-weight: 700; color: var(--blue); }
+.qty-presets {
+  margin: 0 20px 16px;
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.qty-preset-btn {
+  flex: 1; min-width: 60px;
+  padding: 10px 8px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-size: 13px; font-weight: 700; color: var(--text-2);
+  cursor: pointer; text-align: center; transition: all .12s;
+  font-family: inherit;
+}
+.qty-preset-btn:active { background: var(--bg); }
+.qty-preset-btn.active { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.qty-drawer-cta-row {
+  display: flex; gap: 8px; margin: 0 20px; padding-bottom: 4px;
+}
+.qty-cta-cancel {
+  flex: 1; padding: 15px; border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-size: 15px; font-weight: 700; color: var(--text-2);
+  cursor: pointer; font-family: inherit; transition: background .1s;
+}
+.qty-cta-cancel:active { background: var(--bg); }
+.qty-cta-apply {
+  flex: 2; padding: 15px; border-radius: var(--radius-md);
+  border: none; background: var(--blue); color: #fff;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: background .1s;
+}
+.qty-cta-apply:active { background: #1b6fe3; }
+
+/* ══ 발주 상태 배너 ══ */
+.order-status-banner {
+  margin: 0 20px 8px;
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.osb-draft     { background: var(--bg); border: 1.5px dashed var(--border); }
+.osb-confirmed { background: #fff9e6; border: 1.5px solid #f5c842; }
+.osb-sent      { background: var(--green-light); border: 1.5px solid #a0d4b8; }
+.osb-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.osb-body { flex: 1; }
+.osb-title { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+.osb-draft     .osb-title { color: var(--text-2); }
+.osb-confirmed .osb-title { color: #b38000; }
+.osb-sent      .osb-title { color: var(--green); }
+.osb-desc { font-size: 13px; }
+.osb-draft     .osb-desc { color: var(--text-4); }
+.osb-confirmed .osb-desc { color: #9a6c00; }
+.osb-sent      .osb-desc { color: #1a7a50; }
+.osb-timer {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 8px;
+  font-size: 13px; font-weight: 700; color: #b38000;
+  background: #fff3b0; padding: 5px 10px; border-radius: 6px;
+}
+.osb-timer-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #f5c842; animation: blink 1s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.osb-edit-btn {
+  flex-shrink: 0; align-self: center;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  border: 1.5px solid #f5c842; background: #fff9e6;
+  font-size: 13px; font-weight: 700; color: #b38000;
+  cursor: pointer; font-family: inherit; transition: background .1s;
+}
+.osb-edit-btn:active { background: #fff0a0; }
+
+/* 확정 후 아이템 잠금 UI */
+.order-item.locked { cursor: default; }
+.order-item.locked:active { background: var(--surface); }
+.order-item.locked .order-amount { opacity: 1; }
+.locked-hint { font-size:11px; color:var(--text-5); margin-top:2px; }
+.locked-hint.red { color: var(--text-5); }
+
+/* 발주 확정 후 CTA */
+.cta-btn.confirmed-state {
+  background: var(--surface); color: var(--text-3);
+  border: 1.5px solid var(--border);
+}
+.cta-btn.sent-state {
+  background: var(--green); cursor: default;
+}
+
+/* CTA 버튼 */
+.cta-wrap { padding: 16px 20px; background: var(--surface); margin-top: 8px; }
+.cta-btn {
+  width: 100%; padding: 17px;
+  background: var(--blue); color: #fff;
+  border: none; border-radius: var(--radius-md);
+  font-size: 16px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: background .12s, transform .08s;
+  letter-spacing: -.3px;
+}
+.cta-btn:active { background: #1b6fe3; transform: scale(.99); }
+.cta-btn.success { background: var(--green); }
+.cta-btn:disabled { background: var(--text-5); cursor: default; }
+
+/* ══════════════════════════════════
+   기록 탭
+══════════════════════════════════ */
+.stats-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; padding: 16px 20px; background: var(--surface);
+  margin-bottom: 8px;
+}
+.stat-item { text-align: center; }
+.stat-val  {
+  font-size: 22px; font-weight: 900; color: var(--text-1);
+  letter-spacing: -.5px; margin-bottom: 4px;
+}
+.stat-lbl  { font-size: 11px; color: var(--text-4); font-weight: 500; }
+.stat-divider {
+  width: 1px; background: var(--border);
+  margin: 8px 0; border-radius: 1px;
+}
+
+/* 세그먼트 탭 */
+.seg-wrap  { padding: 14px 20px 10px; }
+.seg-track {
+  display: flex; background: var(--bg);
+  border-radius: var(--radius-sm); padding: 3px;
+}
+.seg-btn {
+  flex: 1; padding: 9px; border: none; border-radius: 6px;
+  font-size: 14px; font-weight: 500; font-family: inherit;
+  cursor: pointer; background: transparent; color: var(--text-4);
+  transition: all .18s;
+}
+.seg-btn.active { background: var(--surface); color: var(--text-1); }
+
+/* 재고 리스트 */
+.stock-item {
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.stock-item:last-child { border-bottom: none; }
+.stock-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--bg); display: flex; align-items: center;
+  justify-content: center; font-size: 18px; flex-shrink: 0;
+}
+.stock-info { flex: 1; }
+.stock-name { font-size: 16px; font-weight: 700; color: var(--text-1); letter-spacing: -.3px; margin-bottom: 3px; }
+.stock-sub  { font-size: 12px; color: var(--text-4); }
+.stock-level-bar {
+  height: 4px; border-radius: 2px; margin-top: 6px;
+  background: var(--border); overflow: hidden; width: 80px;
+}
+.stock-level-fill { height: 100%; border-radius: 2px; transition: width .4s ease; }
+.stock-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.stock-input-wrap { display: flex; align-items: center; gap: 6px; }
+.stock-input {
+  width: 72px; text-align: right;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 7px 10px; font-size: 18px; font-weight: 700;
+  font-family: inherit; color: var(--text-1);
+  background: var(--bg); outline: none; transition: border-color .15s;
+}
+.stock-input:focus { border-color: var(--blue); background: var(--surface); }
+.stock-unit-lbl { font-size: 13px; color: var(--text-3); font-weight: 500; }
+.stock-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+}
+.sb-low    { background: var(--red-light); color: var(--red); }
+.sb-ok     { background: var(--green-light); color: var(--green); }
+.sb-warn   { background: var(--orange-light); color: var(--orange); }
+.stock-del-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: var(--bg);
+  color: var(--text-5); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; flex-shrink: 0;
+}
+.stock-del-btn:hover { background: var(--red-light); color: var(--red); }
+
+/* 발주 이력 리스트 */
+.ohist-item {
+  padding: 16px 20px; display: flex; align-items: flex-start;
+  gap: 14px; border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background .1s;
+}
+.ohist-item:last-child { border-bottom: none; }
+.ohist-item:active { background: var(--bg); }
+.ohist-status {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0; margin-top: 2px;
+}
+.ohist-sent     { background: var(--green-light); }
+.ohist-canceled { background: var(--red-light); }
+.ohist-body { flex: 1; }
+.ohist-date  { font-size: 14px; font-weight: 700; color: var(--text-1); margin-bottom: 4px; }
+.ohist-items { font-size: 12px; color: var(--text-4); line-height: 1.5; }
+.ohist-right { text-align: right; flex-shrink: 0; }
+.ohist-total { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 3px; }
+.ohist-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+.ob-sent { background: var(--green-light); color: var(--green); }
+.ob-canceled { background: var(--red-light); color: var(--red); }
+
+/* 예약 발주 */
+.reserve-cta-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 14px 16px;
+  background: var(--blue-light); color: var(--blue);
+  border: 1.5px solid var(--blue); border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: background .12s;
+}
+.reserve-cta-btn:active { background: #d0e8fd; }
+.reserve-ai-banner {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--blue-light); border: 1px solid var(--blue);
+  border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 12px;
+}
+.rai-icon  { font-size: 22px; flex-shrink: 0; }
+.rai-body  { flex: 1; }
+.rai-title { font-size: 14px; font-weight: 700; color: var(--blue); margin-bottom: 3px; }
+.rai-desc  { font-size: 12px; color: #1a5fb4; line-height: 1.5; }
+.reserve-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.reserve-item:last-child { border-bottom: none; }
+.ri-icon { font-size: 20px; width: 36px; text-align: center; flex-shrink: 0; }
+.ri-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text-1); }
+.ri-qty  {
+  font-size: 16px; font-weight: 700; color: var(--text-1);
+  display: flex; align-items: center; gap: 6px;
+}
+.ri-unit { font-size: 12px; color: var(--text-3); font-weight: 400; }
+.ri-change {
+  font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+}
+.rc-up   { background: var(--red-light); color: var(--red); }
+.rc-down { background: var(--blue-light); color: var(--blue); }
+.rc-same { background: var(--bg); color: var(--text-4); }
+.reserve-alert-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.reserve-alert {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff9e6; border: 1px solid #f5c842;
+  border-radius: var(--radius-sm); padding: 12px 14px;
+}
+.ra-icon { font-size: 16px; flex-shrink: 0; }
+.ra-text { font-size: 13px; color: #9a6c00; line-height: 1.5; flex: 1; }
+.ra-text strong { color: #7a5000; }
+.reserved-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+}
+.reserved-item:last-child { border-bottom: none; }
+.ri-date-badge {
+  background: var(--blue-light); color: var(--blue);
+  font-size: 11px; font-weight: 700; padding: 4px 10px;
+  border-radius: 6px; white-space: nowrap; flex-shrink: 0;
+}
+.ri-cancel-btn {
+  border: none; background: none; color: var(--text-5);
+  font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0;
+  transition: color .12s;
+}
+.ri-cancel-btn:hover { color: var(--red); }
+
+/* 품목 추가 드로어 */
+.add-field-row { margin-bottom: 20px; }
+.add-field-label { font-size: 12px; font-weight: 700; color: var(--text-3); margin-bottom: 8px; letter-spacing: .02em; }
+.add-input {
+  width: 100%; padding: 13px 16px;
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  font-size: 16px; font-family: inherit; color: var(--text-1);
+  background: var(--bg); outline: none; transition: border-color .15s;
+}
+.add-input:focus { border-color: var(--blue); background: var(--surface); }
+.unit-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.unit-opt {
+  padding: 8px 16px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-size: 14px; font-weight: 500; color: var(--text-2);
+  cursor: pointer; font-family: inherit; transition: all .12s;
+}
+.unit-opt.active { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.emoji-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.emoji-opt {
+  width: 44px; height: 44px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-size: 20px; cursor: pointer; transition: all .12s;
+  display: flex; align-items: center; justify-content: center;
+}
+.emoji-opt.active { border-color: var(--blue); background: var(--blue-light); }
+
+.hist-list { display: flex; flex-direction: column; }
+.hist-item {
+  background: var(--surface);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background .1s;
+}
+.hist-item:last-child { border-bottom: none; }
+.hist-item:active { background: var(--bg); }
+
+.hist-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--bg); display: flex; align-items: center;
+  justify-content: center; font-size: 18px; flex-shrink: 0;
+}
+.hist-info  { flex: 1; }
+.hist-date  { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 3px; letter-spacing: -.3px; }
+.hist-meta  { font-size: 13px; color: var(--text-4); }
+.hist-right { text-align: right; }
+.acc-num {
+  font-size: 20px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 2px;
+}
+.acc-lbl { font-size: 11px; color: var(--text-4); }
+
+/* ══════════════════════════════════
+   설정 탭
+══════════════════════════════════ */
+.settings-profile {
+  background: var(--surface);
+  padding: 24px 20px 20px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 14px;
+}
+.profile-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--blue-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+}
+.profile-name { font-size: 18px; font-weight: 900; color: var(--text-1); letter-spacing: -.3px; margin-bottom: 3px; }
+.profile-sub  { font-size: 13px; color: var(--text-4); }
+
+.settings-section-title {
+  font-size: 12px; font-weight: 700; color: var(--text-4);
+  padding: 16px 20px 8px; letter-spacing: .02em;
+}
+
+.settings-list { display: flex; flex-direction: column; }
+.settings-item {
+  background: var(--surface);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background .1s;
+}
+.settings-item:last-child { border-bottom: none; }
+.settings-item:active { background: var(--bg); }
+.settings-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.settings-info { flex: 1; }
+.settings-label { font-size: 16px; font-weight: 500; color: var(--text-1); letter-spacing: -.3px; }
+.settings-sub   { font-size: 13px; color: var(--text-4); margin-top: 2px; }
+.settings-value { font-size: 14px; color: var(--text-4); font-weight: 500; }
+.settings-chevron { color: var(--text-5); font-size: 18px; }
+
+/* 매장 설정 인라인 편집 */
+.profile-edit-btn {
+  margin-left: auto; padding: 7px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text-3);
+  font-size: 13px; font-weight: 500; font-family: inherit;
+  cursor: pointer; transition: all .12s;
+}
+.profile-edit-btn.editing {
+  border-color: var(--blue); color: var(--blue); background: var(--blue-light);
+}
+.store-field-row {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.store-field-row:last-child { border-bottom: none; }
+.store-field-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.store-field-label {
+  font-size: 12px; color: var(--text-4); font-weight: 500;
+  margin-bottom: 3px;
+}
+.store-field-val { font-size: 16px; font-weight: 500; color: var(--text-1); }
+.store-field-input {
+  width: 100%; border: none; outline: none; background: transparent;
+  font-size: 16px; font-weight: 500; color: var(--text-1);
+  font-family: inherit; padding: 0;
+  border-bottom: 2px solid var(--blue);
+}
+.store-field-input::placeholder { color: var(--text-5); font-weight: 400; }
+
+/* 지도 검색 */
+.map-search-wrap {
+  position: relative; margin-bottom: 12px;
+}
+.map-search-input-row {
+  display: flex; gap: 8px; align-items: center;
+}
+.map-search-input {
+  flex: 1; padding: 13px 16px;
+  border: 1.5px solid var(--blue); border-radius: var(--radius-md);
+  font-size: 15px; font-family: inherit; color: var(--text-1);
+  background: var(--surface); outline: none;
+}
+.map-search-input::placeholder { color: var(--text-5); }
+.map-search-btn {
+  padding: 13px 18px; border-radius: var(--radius-md);
+  border: none; background: var(--blue); color: #fff;
+  font-size: 14px; font-weight: 700; font-family: inherit;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: background .12s;
+}
+.map-search-btn:active { background: #1b6fe3; }
+.map-search-results {
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  overflow: hidden; margin-top: 8px;
+  background: var(--surface);
+}
+.map-result-item {
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .1s;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.map-result-item:last-child { border-bottom: none; }
+.map-result-item:active { background: var(--bg); }
+.map-result-item.selected { background: var(--blue-light); }
+.mri-icon {
+  width: 36px; height: 36px; background: var(--bg);
+  border-radius: var(--radius-sm); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.mri-body { flex: 1; min-width: 0; }
+.mri-name {
+  font-size: 14px; font-weight: 700; color: var(--text-1);
+  margin-bottom: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mri-name mark {
+  background: none; color: var(--blue); font-weight: 900;
+}
+.mri-addr { font-size: 12px; color: var(--text-4); line-height: 1.4; }
+.mri-cat  {
+  font-size: 11px; font-weight: 700; color: var(--blue);
+  background: var(--blue-light); padding: 2px 7px;
+  border-radius: 10px; margin-top: 5px; display: inline-block;
+}
+.map-search-empty {
+  padding: 24px 16px; text-align: center;
+  font-size: 13px; color: var(--text-4);
+}
+.map-search-loading {
+  padding: 20px; display: flex; justify-content: center;
+}
+.map-selected-banner {
+  background: var(--green-light); border: 1px solid #a0d4b8;
+  border-radius: var(--radius-md); padding: 14px 16px;
+  margin-top: 12px; display: flex; align-items: flex-start; gap: 12px;
+}
+.msb-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.msb-body { flex: 1; }
+.msb-name { font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+.msb-detail { font-size: 12px; color: #1a7a50; line-height: 1.6; }
+.msb-change { font-size: 12px; color: var(--green); cursor: pointer; margin-top: 6px; font-weight: 500; text-decoration: underline; }
+
+/* 카카오 앱키 영역 */
+.kakao-key-row {
+  display: flex; margin-bottom: 6px;
+}
+.kakao-key-guide {
+  font-size: 11px; color: var(--text-4); line-height: 1.5; margin-bottom: 0;
+}
+.kakao-key-guide a { color: var(--blue); text-decoration: none; }
+.kakao-connected-badge {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--green-light); border: 1px solid #a0d4b8;
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 13px; font-weight: 700; color: var(--green);
+}
+.kakao-connected-badge button {
+  border: none; background: none; color: var(--green);
+  font-size: 12px; cursor: pointer; font-family: inherit;
+  text-decoration: underline; padding: 0;
+}
+.badge-connected { font-size: 11px; font-weight: 700; background: var(--green-light); color: var(--green); padding: 3px 8px; border-radius: 4px; }
+.badge-pending   { font-size: 11px; font-weight: 700; background: var(--orange-light); color: var(--orange); padding: 3px 8px; border-radius: 4px; }
+
+/* ══════════════════════════════════
+   드로어 (상세)
+══════════════════════════════════ */
+.overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(25,31,40,.5);
+}
+.overlay.open { display: flex; align-items: flex-end; }
+.drawer {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-height: 80dvh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  padding: 0 0 calc(20px + var(--safe-bottom));
+}
+.overlay.open .drawer { transform: translateY(0); }
+.drawer-handle-wrap { padding: 12px 0 0; display: flex; justify-content: center; margin-bottom: 4px; }
+.drawer-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; }
+.drawer-header { padding: 12px 20px 16px; border-bottom: 1px solid var(--border); }
+.drawer-title  { font-size: 18px; font-weight: 900; color: var(--text-1); letter-spacing: -.5px; }
+.drawer-sub    { font-size: 13px; color: var(--text-4); margin-top: 3px; }
+
+.drawer-row {
+  padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border); font-size: 15px;
+}
+.drawer-row:last-of-type { border-bottom: none; }
+.dr-label { color: var(--text-3); font-weight: 500; }
+.dr-val   { font-weight: 700; color: var(--text-1); }
+
+.factor-card {
+  margin: 12px 20px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.factor-title { font-size: 12px; font-weight: 700; color: var(--text-4); margin-bottom: 12px; }
+.factor-row   { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.factor-row:last-child { margin-bottom: 0; }
+.factor-name  { font-size: 14px; color: var(--text-2); font-weight: 500; flex: 1; }
+.factor-bar-bg { flex: 2; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.factor-bar-fill { height: 100%; border-radius: 2px; }
+.factor-coeff { font-size: 13px; font-weight: 700; min-width: 42px; text-align: right; }
+.coeff-pos { color: var(--red); }
+.coeff-neg { color: var(--blue); }
+.coeff-neu { color: var(--text-4); }
+
+.drawer-cta {
+  margin: 8px 20px 0;
+  width: calc(100% - 40px);
+  padding: 17px; background: var(--blue); color: #fff;
+  border: none; border-radius: var(--radius-md);
+  font-size: 16px; font-weight: 700; font-family: inherit;
+  cursor: pointer; letter-spacing: -.3px;
+}
+
+/* ══════════════════════════════════
+   토스트 알림
+══════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: calc(72px + var(--safe-bottom) + 12px);
+  left: 50%; transform: translateX(-50%) translateY(12px);
+  background: var(--text-1); color: #fff;
+  padding: 12px 20px; border-radius: 10px;
+  font-size: 14px; font-weight: 500; letter-spacing: -.3px;
+  opacity: 0; transition: all .22s; white-space: nowrap;
+  z-index: 300; pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── 로더 ── */
+.loader { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; gap: 12px; }
+.spin   { width: 24px; height: 24px; border: 2.5px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; }
+.loader-text { font-size: 13px; color: var(--text-4); font-weight: 500; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 스태거 애니 ── */
+.fc-item:nth-child(1)    { animation: fadeUp .25s .04s both; }
+.fc-item:nth-child(2)    { animation: fadeUp .25s .08s both; }
+.fc-item:nth-child(3)    { animation: fadeUp .25s .12s both; }
+.fc-item:nth-child(4)    { animation: fadeUp .25s .16s both; }
+.order-item:nth-child(1) { animation: fadeUp .25s .04s both; }
+.order-item:nth-child(2) { animation: fadeUp .25s .08s both; }
+.order-item:nth-child(3) { animation: fadeUp .25s .12s both; }
+.order-item:nth-child(4) { animation: fadeUp .25s .16s both; }
+.order-item:nth-child(5) { animation: fadeUp .25s .20s both; }
+.hist-item:nth-child(1)  { animation: fadeUp .25s .04s both; }
+.hist-item:nth-child(2)  { animation: fadeUp .25s .08s both; }
+.hist-item:nth-child(3)  { animation: fadeUp .25s .12s both; }
+</style>
+<!-- 카카오 지도 SDK — 앱키 입력 후 loadKakaoSDK() 호출 -->
+<script>
+let _kakaoLoaded = false;
+// 카카오 JS 앱키 — 사전 설정됨
+const KAKAO_JS_KEY = 'd7c10045a41d998112ddd00465ae34f5';
+let _kakaoAppKey = localStorage.getItem('picko_kakao_js_key') || KAKAO_JS_KEY;
+
+function loadKakaoSDK(appkey) {
+  return new Promise((resolve, reject) => {
+    if (typeof kakao !== 'undefined' && kakao.maps?.services) { resolve(); return; }
+    const script = document.createElement('script');
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${appkey}&libraries=services&autoload=false`;
+    script.onload = () => {
+      kakao.maps.load(() => { _kakaoLoaded = true; resolve(); });
+    };
+    script.onerror = () => reject(new Error('SDK 로드 실패'));
+    document.head.appendChild(script);
+  });
+}
+</script>
+</head>
+<body>
+
+<!-- ── 헤더 ── -->
+<header class="header">
+  <div><div class="header-logo">PICK<span>O</span></div><div class="header-sub">스마트 발주 예측</div></div>
+  <div class="header-right">
+    <div class="header-icon header-badge">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </div>
+    <div class="header-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ PAGES ══════════ -->
+<div class="pages">
+
+  <!-- ① 오늘 예측 -->
+  <div class="page active" id="page-home">
+
+    <!-- 매장 요약 -->
+    <div class="store-card">
+      <div class="store-greeting" id="greetingText">좋은 아침이에요 👋</div>
+      <div class="store-name-row">
+        <div class="store-name" id="storeName">대박삼겹살</div>
+        <div class="store-tag">종로점</div>
+      </div>
+      <div class="store-meta" id="todayMeta">--</div>
+      <div class="today-summary">
+        <div class="summary-box">
+          <div class="summary-label">오늘 예상 매출</div>
+          <div><span class="summary-value">92</span><span class="summary-unit">만원</span></div>
+          <div class="summary-diff diff-up">▲ 지난주 대비 +12%</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-label">PICKO 예측 신뢰도</div>
+          <div><span class="summary-value" id="avgConf">87</span><span class="summary-unit">%</span></div>
+          <div class="summary-diff diff-same">날씨 데이터 반영</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 날씨 카드 -->
+    <div class="weather-banner" id="weatherBanner">
+      <div class="weather-icon-wrap" id="wxIconWrap">🌤</div>
+      <div class="weather-main">
+        <div class="weather-title" id="wxTitle">날씨 불러오는 중...</div>
+        <div class="weather-desc"  id="wxDesc">예측에 날씨 정보가 반영됩니다</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b0b8c1" stroke-width="2.5" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+
+    <!-- 메뉴 예측 -->
+    <div class="section">
+      <div class="section-title">
+        메뉴별 예상 판매량
+        <span class="section-more" onclick="loadForecast()">새로고침</span>
+      </div>
+    </div>
+    <div class="card" style="margin:0 20px 20px">
+      <div class="fc-list" id="fcList">
+        <div class="loader"><div class="spin"></div><div class="loader-text">예측 계산 중</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ② 발주하기 -->
+  <div class="page" id="page-order">
+
+    <!-- 세그먼트 탭 -->
+    <div class="seg-wrap">
+      <div class="seg-track">
+        <button class="seg-btn active" id="seg-today" onclick="switchOrderSeg('today')">오늘 발주</button>
+        <button class="seg-btn"        id="seg-hist"  onclick="switchOrderSeg('hist')">발주 이력</button>
+      </div>
+    </div>
+
+    <!-- ── 오늘 발주 패널 ── -->
+    <div id="order-panel-today">
+      <div class="order-header">
+        <div class="order-total-label">오늘 발주할 품목</div>
+        <div>
+          <span class="order-total-count" id="orderCount">5</span>
+          <span class="order-total-unit">개 품목</span>
+        </div>
+        <div class="order-savings" id="savingsChip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          절감 예상 ₩38,000
+        </div>
+      </div>
+
+      <div class="order-status-banner osb-draft" id="orderStatusBanner">
+        <div class="osb-icon">📋</div>
+        <div class="osb-body">
+          <div class="osb-title">발주 대기 중</div>
+          <div class="osb-desc">아래 수량을 확인하고 발주를 확정해 주세요</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin:0 20px 8px">
+        <div class="order-list" id="orderList">
+          <div class="loader"><div class="spin"></div></div>
+        </div>
+      </div>
+
+      <div class="cta-wrap" id="ctaWrap">
+        <button class="cta-btn" id="ctaBtn" onclick="handleCtaClick()">발주 확정하기</button>
+      </div>
+    </div>
+
+    <!-- ── 발주 이력 패널 ── -->
+    <div id="order-panel-hist" style="display:none">
+      <div class="order-header">
+        <div class="order-total-label">발주 이력</div>
+        <div>
+          <span class="order-total-count">31</span>
+          <span class="order-total-unit">건 · 이번달</span>
+        </div>
+        <div style="margin-top:12px">
+          <button class="reserve-cta-btn" onclick="openReserveDrawer()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            날짜 선택해서 예약 발주하기
+          </button>
+        </div>
+      </div>
+
+      <!-- 예약발주 목록 -->
+      <div id="reservedOrdersSection" style="display:none">
+        <div class="section" style="padding-bottom:0"><div class="section-title">예약된 발주</div></div>
+        <div class="card" style="margin:0 20px 8px">
+          <div id="reservedOrdersList"></div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-bottom:0"><div class="section-title">발주 이력</div></div>
+      <div class="card" style="margin:0 20px 8px">
+        <div class="ohist-list" id="orderHistList">
+          <div class="loader"><div class="spin"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ③ 기록 / 재고 관리 -->
+  <div class="page" id="page-history">
+
+    <!-- 세그먼트 탭 -->
+    <div class="seg-wrap">
+      <div class="seg-track">
+        <button class="seg-btn active" id="seg-stock"  onclick="switchHistSeg('stock')">재고 현황</button>
+        <button class="seg-btn"        id="seg-ordlog" onclick="switchHistSeg('ordlog')">발주 기록</button>
+      </div>
+    </div>
+
+    <!-- ── 재고 현황 패널 ── -->
+    <div id="hist-panel-stock">
+
+      <!-- 요약 stat -->
+      <div class="card" style="margin:0 20px 8px">
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-val" id="stockAlertCount" style="color:var(--red)">2</div>
+            <div class="stat-lbl">부족 경고</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-val" id="stockOkCount" style="color:var(--green)">3</div>
+            <div class="stat-lbl">충분</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-val" id="stockTotalCount">5</div>
+            <div class="stat-lbl">전체 품목</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-bottom:0">
+        <div class="section-title">
+          실제 재고 입력
+          <span class="section-more" onclick="openAddStockItem()">+ 품목 추가</span>
+        </div>
+      </div>
+      <div class="card" style="margin:0 20px 8px">
+        <div class="stock-list" id="stockList"></div>
+      </div>
+      <div style="padding:0 20px 20px">
+        <button class="cta-btn" onclick="saveAllStock()">재고 현황 저장</button>
+      </div>
+    </div>
+
+    <!-- ── 발주 기록 패널 ── -->
+    <div id="hist-panel-ordlog" style="display:none">
+      <div class="card" style="margin:16px 20px 8px">
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-val" style="color:var(--blue)">87%</div>
+            <div class="stat-lbl">이번달 적중률</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-val" style="color:var(--green)">₩62만</div>
+            <div class="stat-lbl">절감 추정</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-val">31회</div>
+            <div class="stat-lbl">이번달 발주</div>
+          </div>
+        </div>
+      </div>
+      <div class="section" style="padding-bottom:0">
+        <div class="section-title">최근 발주 기록</div>
+      </div>
+      <div class="card" style="margin:0 20px 20px">
+        <div class="hist-list" id="histList">
+          <div class="loader"><div class="spin"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ④ 설정 -->
+  <div class="page" id="page-settings">
+
+    <!-- 프로필 카드 -->
+    <div class="settings-profile" style="background:var(--surface);margin-bottom:8px">
+      <div class="profile-avatar">🏪</div>
+      <div style="flex:1">
+        <div class="profile-name" id="profileName">대박삼겹살</div>
+        <div class="profile-sub" id="profileSub">종로점 · 고기구이</div>
+      </div>
+      <button class="profile-edit-btn" id="storeEditBtn" onclick="toggleStoreEdit()">편집</button>
+    </div>
+
+    <!-- 매장 설정 (편집 모드 토글) -->
+    <div id="storeEditSection" style="display:none;margin-bottom:8px">
+      <div style="margin:0 20px;padding:16px;background:var(--surface);border-radius:var(--radius-lg)">
+
+        <!-- 카카오 앱키 입력 -->
+        <div id="kakaoKeySection">
+          <div class="add-field-label" style="margin-bottom:6px">카카오 지도 앱키</div>
+          <div class="kakao-key-row">
+            <input class="map-search-input" id="kakaoKeyInput" type="text"
+              placeholder="JavaScript 앱키 입력 (developers.kakao.com)"
+              value="" style="flex:1;border-radius:var(--radius-sm) 0 0 var(--radius-sm)" />
+            <button class="map-search-btn" onclick="applyKakaoKey()"
+              style="border-radius:0 var(--radius-sm) var(--radius-sm) 0;white-space:nowrap">연결</button>
+          </div>
+          <div class="kakao-key-guide">
+            앱키 없이도 검색 가능 (데모 모드) · 실제 검색은 앱키 필요
+          </div>
+        </div>
+
+        <div id="kakaoKeyOk" style="display:none" class="kakao-connected-badge">
+          <span>✓ 카카오 지도 연결됨</span>
+          <button onclick="resetKakaoKey()">변경</button>
+        </div>
+
+        <div style="height:1px;background:var(--border);margin:14px 0 12px"></div>
+
+        <!-- 지도 검색 영역 -->
+        <div class="add-field-label" style="margin-bottom:8px">매장 검색</div>
+        <div class="map-search-wrap">
+          <div class="map-search-input-row">
+            <input class="map-search-input" id="mapSearchInput" type="text"
+              placeholder="매장명으로 검색 (예: 대박삼겹살)"
+              onkeydown="if(event.key==='Enter') searchPlace()" />
+            <button class="map-search-btn" onclick="searchPlace()">검색</button>
+          </div>
+          <!-- 검색 결과 -->
+          <div id="mapSearchResults" style="display:none" class="map-search-results"></div>
+          <!-- 선택된 매장 확인 배너 -->
+          <div id="mapSelectedBanner" style="display:none" class="map-selected-banner">
+            <div class="msb-icon">📍</div>
+            <div class="msb-body">
+              <div class="msb-name" id="msbName"></div>
+              <div class="msb-detail" id="msbDetail"></div>
+              <div class="msb-change" onclick="clearMapSelection()">다시 검색하기</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+        <!-- 직접 입력 필드 (검색 선택 후 자동 채워짐, 수정 가능) -->
+        <div class="add-field-label" style="margin-bottom:12px">매장 정보 확인 · 수정</div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div class="store-field-label">매장명</div>
+            <input id="storeNameInput" class="store-field-input" type="text"
+              placeholder="매장명 입력" value="대박삼겹살"
+              style="display:block;border-bottom:1.5px solid var(--border);padding:6px 0" />
+          </div>
+          <div>
+            <div class="store-field-label">지점명</div>
+            <input id="storeBranchInput" class="store-field-input" type="text"
+              placeholder="지점명 입력 (예: 종로점)" value="종로점"
+              style="display:block;border-bottom:1.5px solid var(--border);padding:6px 0" />
+          </div>
+          <div>
+            <div class="store-field-label">업종</div>
+            <input id="storeCategoryInput" class="store-field-input" type="text"
+              placeholder="업종 입력 (예: 고기구이)" value="고기구이"
+              style="display:block;border-bottom:1.5px solid var(--border);padding:6px 0" />
+          </div>
+          <div>
+            <div class="store-field-label">주소</div>
+            <input id="storeAddressInput" class="store-field-input" type="text"
+              placeholder="주소 (지도 검색 시 자동 입력)" value=""
+              style="display:block;border-bottom:1.5px solid var(--border);padding:6px 0;color:var(--text-3)" />
+          </div>
+        </div>
+
+        <!-- 좌표 정보 (숨김 — 기상청 격자 변환용) -->
+        <input type="hidden" id="storeLat" />
+        <input type="hidden" id="storeLng" />
+
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <button class="qty-cta-cancel" style="flex:1;padding:13px"
+            onclick="cancelStoreEdit()">취소</button>
+          <button class="qty-cta-apply" style="flex:2;padding:13px"
+            onclick="saveStoreEdit()">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section-title">연동 서비스</div>
+    <div class="card" style="margin:0 20px 8px">
+      <div class="settings-list">
+        <div class="settings-item" onclick="toast('기상청 API 설정으로 이동')">
+          <div class="settings-icon" style="background:#ebf3fe">🌤</div>
+          <div class="settings-info">
+            <div class="settings-label">기상청 날씨 API</div>
+            <div class="settings-sub">data.kma.go.kr · 무료</div>
+          </div>
+          <span class="badge-pending">설정 필요</span>
+        </div>
+        <div class="settings-item" onclick="toast('카카오 알림 설정으로 이동')">
+          <div class="settings-icon" style="background:#fff9c4">💬</div>
+          <div class="settings-info">
+            <div class="settings-label">카카오 알림</div>
+            <div class="settings-sub">매일 오전 8:00 자동 발송</div>
+          </div>
+          <span class="badge-pending">설정 필요</span>
+        </div>
+        <div class="settings-item" onclick="toast('Google Sheets 연결됨')">
+          <div class="settings-icon" style="background:#e8f5e9">📊</div>
+          <div class="settings-info">
+            <div class="settings-label">Google Sheets</div>
+            <div class="settings-sub">발주 내역 자동 저장 중</div>
+          </div>
+          <span class="badge-connected">연결됨</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section-title">매장 설정</div>
+    <div class="card" style="margin:0 20px 8px">
+      <div class="settings-list">
+        <div class="settings-item" onclick="toggleStoreEdit()">
+          <div class="settings-icon" style="background:#f3e5f5">🏪</div>
+          <div class="settings-info">
+            <div class="settings-label">매장명 · 지점 · 업종</div>
+            <div class="settings-sub" id="settingsStorePreview">대박삼겹살 · 종로점 · 고기구이</div>
+          </div>
+          <span class="settings-value" style="color:var(--blue)">편집</span>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-item" onclick="toast('좌석 수 편집 기능 준비 중')">
+          <div class="settings-icon" style="background:#fff3e0">🪑</div>
+          <div class="settings-info"><div class="settings-label">좌석 수</div></div>
+          <span class="settings-value">48석</span>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-item" onclick="toast('기상청 격자 편집 기능 준비 중')">
+          <div class="settings-icon" style="background:#e3f2fd">📍</div>
+          <div class="settings-info">
+            <div class="settings-label">매장 위치 (기상청 격자)</div>
+          </div>
+          <span class="settings-value">NX 60 · NY 127</span>
+          <span class="settings-chevron">›</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section-title">PICKO 모델</div>
+    <div class="card" style="margin:0 20px 8px">
+      <div class="settings-list">
+        <div class="settings-item" onclick="toast('모델 정보')">
+          <div class="settings-icon" style="background:#e8faf2">🤖</div>
+          <div class="settings-info">
+            <div class="settings-label">예측 모델</div>
+            <div class="settings-sub">Rule-based v2 · 날씨 4계수 보정</div>
+          </div>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-item" onclick="toast('예측 재계산을 시작합니다'); loadForecast()">
+          <div class="settings-icon" style="background:#fff0f1">🔄</div>
+          <div class="settings-info"><div class="settings-label">예측 재계산</div></div>
+          <span class="settings-value" style="color:var(--blue)">실행</span>
+          <span class="settings-chevron">›</span>
+        </div>
+        <div class="settings-item" onclick="toast('카카오 테스트 메시지를 발송합니다')">
+          <div class="settings-icon" style="background:#fff9c4">📨</div>
+          <div class="settings-info"><div class="settings-label">카카오 테스트 발송</div></div>
+          <span class="settings-value" style="color:var(--blue)">실행</span>
+          <span class="settings-chevron">›</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:8px"></div>
+
+  </div>
+
+</div>
+
+<!-- ── 바텀 네비 ── -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="go('home')">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z" fill-opacity=".15"/><path d="M3 9.5L12 3l9 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="9" y="14" width="6" height="7" rx="1" fill="currentColor" opacity=".9"/></svg>
+    </div>
+    홈
+  </button>
+  <button class="nav-btn" id="nav-order" onclick="go('order')">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+    </div>
+    발주
+  </button>
+  <button class="nav-btn" id="nav-history" onclick="go('history')">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    기록
+  </button>
+  <button class="nav-btn" id="nav-settings" onclick="go('settings')">
+    <div class="nav-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </div>
+    내 정보
+  </button>
+</nav>
+
+<!-- ── 수량 조절 드로어 ── -->
+<div class="overlay" id="qtyDrawer" onclick="closeQtyDrawer()">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-handle-wrap"><div class="drawer-handle"></div></div>
+    <div class="drawer-header">
+      <div class="drawer-title" id="qtyDrawerTitle">삼겹살 발주량 조절</div>
+      <div class="drawer-sub" id="qtyDrawerSub">AI 추천 기준으로 조절하세요</div>
+    </div>
+
+    <!-- AI 추천량 표시 -->
+    <div class="qty-ai-rec">
+      <span class="qty-ai-label">PICKO 추천량</span>
+      <span class="qty-ai-val" id="qtyAiRec">10.2 kg</span>
+    </div>
+
+    <!-- 스텝퍼 -->
+    <div class="qty-stepper">
+      <button class="qty-btn" id="qtyMinus" onclick="stepQty(-1)">−</button>
+      <div class="qty-display">
+        <div class="qty-display-num" id="qtyNum">10.2</div>
+        <div class="qty-display-unit" id="qtyUnit">kg</div>
+      </div>
+      <button class="qty-btn" id="qtyPlus" onclick="stepQty(+1)">+</button>
+    </div>
+
+    <!-- 빠른 선택 프리셋 -->
+    <div class="qty-presets" id="qtyPresets"></div>
+
+    <!-- 적용 / 취소 -->
+    <div class="qty-drawer-cta-row">
+      <button class="qty-cta-cancel" onclick="closeQtyDrawer()">취소</button>
+      <button class="qty-cta-apply" onclick="applyQty()">이 수량으로 발주</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 예약발주 드로어 ── -->
+<div class="overlay" id="reserveDrawer" onclick="closeReserveDrawer()">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-handle-wrap"><div class="drawer-handle"></div></div>
+    <div class="drawer-header">
+      <div class="drawer-title">예약 발주</div>
+      <div class="drawer-sub" id="reserveSubtitle">날짜를 선택하면 PICKO가 발주량을 예측합니다</div>
+    </div>
+
+    <div style="padding:0 20px 8px">
+      <div class="add-field-row">
+        <div class="add-field-label">발주 예정일</div>
+        <input class="add-input" id="reserveDate" type="date" />
+      </div>
+
+      <!-- AI 예약 추천 배너 -->
+      <div id="reserveAiSection" style="display:none">
+        <div class="reserve-ai-banner">
+          <div class="rai-icon">🤖</div>
+          <div class="rai-body">
+            <div class="rai-title" id="raiTitle">PICKO 예측</div>
+            <div class="rai-desc"  id="raiDesc">날짜를 선택하면 예측이 표시됩니다</div>
+          </div>
+        </div>
+        <div class="reserve-item-list" id="reserveItemList"></div>
+      </div>
+
+      <!-- 소진 예상일 알림 -->
+      <div class="reserve-alert-list" id="reserveAlertList"></div>
+    </div>
+
+    <div class="qty-drawer-cta-row">
+      <button class="qty-cta-cancel" onclick="closeReserveDrawer()">취소</button>
+      <button class="qty-cta-apply" id="reserveApplyBtn" onclick="applyReserveOrder()" disabled>예약 확정</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 상세 드로어 ── -->
+<div class="overlay" id="drawer" onclick="closeDrawer()">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-handle-wrap"><div class="drawer-handle"></div></div>
+    <div class="drawer-header">
+      <div class="drawer-title" id="drawerTitle"></div>
+      <div class="drawer-sub"   id="drawerSub"></div>
+    </div>
+    <div id="drawerBody"></div>
+    <button class="drawer-cta" onclick="closeDrawer()">확인</button>
+  </div>
+</div>
+
+<!-- ── 품목 추가 드로어 ── -->
+<div class="overlay" id="addStockDrawer" onclick="closeAddStockItem()">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-handle-wrap"><div class="drawer-handle"></div></div>
+    <div class="drawer-header">
+      <div class="drawer-title" id="addStockTitle">품목 추가</div>
+      <div class="drawer-sub">재고를 직접 관리할 식자재를 추가하세요</div>
+    </div>
+    <div style="padding:0 20px">
+      <div class="add-field-row">
+        <div class="add-field-label">품목명</div>
+        <input class="add-input" id="addItemName" type="text" placeholder="예: 목살, 상추, 된장..." />
+      </div>
+      <div class="add-field-row">
+        <div class="add-field-label">단위</div>
+        <div class="unit-options" id="unitOptions">
+          <button class="unit-opt active" onclick="selectUnit(this,'kg')">kg</button>
+          <button class="unit-opt" onclick="selectUnit(this,'g')">g</button>
+          <button class="unit-opt" onclick="selectUnit(this,'개')">개</button>
+          <button class="unit-opt" onclick="selectUnit(this,'봉')">봉</button>
+          <button class="unit-opt" onclick="selectUnit(this,'통')">통</button>
+          <button class="unit-opt" onclick="selectUnit(this,'박스')">박스</button>
+        </div>
+      </div>
+      <div class="add-field-row">
+        <div class="add-field-label">현재 재고</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input class="add-input" id="addItemQty" type="number" min="0" step="0.1" placeholder="0" style="flex:1" />
+          <span id="addUnitDisplay" style="font-size:14px;font-weight:500;color:var(--text-2);min-width:28px">kg</span>
+        </div>
+      </div>
+      <div class="add-field-row">
+        <div class="add-field-label">이모지 (선택)</div>
+        <div class="emoji-options">
+          <button class="emoji-opt active" onclick="selectEmoji(this,'🥩')">🥩</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🍖')">🍖</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🥬')">🥬</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🧅')">🧅</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🍜')">🍜</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🫙')">🫙</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🧂')">🧂</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🐟')">🐟</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'🥚')">🥚</button>
+          <button class="emoji-opt" onclick="selectEmoji(this,'📦')">📦</button>
+        </div>
+      </div>
+    </div>
+    <div class="qty-drawer-cta-row" style="margin-top:8px">
+      <button class="qty-cta-cancel" onclick="closeAddStockItem()">취소</button>
+      <button class="qty-cta-apply" onclick="confirmAddStockItem()">추가하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 토스트 ── -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ══════════════════════════
+// Config & State
+// ══════════════════════════
+const CFG = {
+  storeName:     '대박삼겹살',
+  storeLocation: '종로점',
+  // SHEETS_URL: 'https://script.google.com/macros/s/YOUR_ID/exec',
+
+  // 기상청 API — 브라우저에서 직접 호출 (CORS 허용됨)
+  KMA_API_KEY: 'Ek25WvxX9%2FAQCJwrRRHvHDQgWCA03UPI7ZtD83xxK50iqSbWwcjGpxtMphM%2BZ8GItlVBYtxoEryE%2FiVDso0bxw%3D%3D',
+  KMA_NX: 60,   // 서울 종로 격자
+  KMA_NY: 127,
+
+  MOCK: false,  // false = 실제 기상청 API 사용
+};
+
+const MOCK_WEATHER = {
+  temp:18, tempMax:23, tempMin:12,
+  skyDesc:'맑음', pop:15, windSpeed:2.1
+};
+
+const MOCK_FORECASTS = [
+  { name:'삼겹살', emoji:'🥩', unit:'인분', category:'메인',
+    predicted:46, confidence:88, trend:'up',
+    reason:'금요일 특수(+28%) · 맑음(+5%) · 기온 보정(+6%) · 상승 추세',
+    factors:{ base:32, dayCoeff:1.28, weatherCoeff:1.05, tempCoeff:1.06, trendCoeff:1.06 },
+    lastWeekSameDay:40, last7avg:36 },
+  { name:'목살', emoji:'🍖', unit:'인분', category:'메인',
+    predicted:19, confidence:82, trend:'same',
+    reason:'금요일 특수(+28%) · 맑음(+5%) · 평균 추세',
+    factors:{ base:13, dayCoeff:1.28, weatherCoeff:1.05, tempCoeff:1.00, trendCoeff:1.01 },
+    lastWeekSameDay:20, last7avg:18 },
+  { name:'냉면', emoji:'🍜', unit:'그릇', category:'사이드',
+    predicted:31, confidence:79, trend:'up',
+    reason:'금요일 특수(+28%) · 맑음(+5%) · 상승 추세(+8%)',
+    factors:{ base:22, dayCoeff:1.28, weatherCoeff:1.05, tempCoeff:1.00, trendCoeff:1.08 },
+    lastWeekSameDay:25, last7avg:22 },
+  { name:'된장찌개', emoji:'🍲', unit:'개', category:'사이드',
+    predicted:11, confidence:75, trend:'down',
+    reason:'금요일(+28%) · 맑음(+5%) · 하락 추세(-8%)',
+    factors:{ base:9, dayCoeff:1.28, weatherCoeff:1.05, tempCoeff:1.00, trendCoeff:0.92 },
+    lastWeekSameDay:14, last7avg:13 },
+];
+
+// MOCK_ORDERS는 stockItems에서 동적 파생 — stockOrdersFromStock() 사용
+// 공급업체 매핑 (품목명 → 공급업체)
+const SUPPLIER_MAP = {
+  '삼겹살':'한우마트', '목살':'한우마트', '냉면면':'신선식품',
+  '된장':'전통식품', '상추':'새벽채소',
+};
+const DEFAULT_SUPPLIER = '기본공급처';
+
+// stockItems → orders 변환 (AI 추천량 = 재고부족량 × 1.1 안전재고)
+function stockToOrders(items) {
+  return items.map(item => {
+    const needed  = Math.max(0, item.maxQty * 0.7 - item.qty); // 70% 채우기 기준
+    const aiQty   = fmtQty(needed * 1.1);
+    const step    = item.unit === 'kg' ? 0.5 : item.unit === 'g' ? 50 : 1;
+    return {
+      id:         item.id,
+      ingredient: item.name,
+      emoji:      item.emoji,
+      qty:        aiQty,
+      aiQty:      aiQty,
+      step,
+      unit:       item.unit,
+      supplier:   SUPPLIER_MAP[item.name] || DEFAULT_SUPPLIER,
+      confidence: 80,
+      checked:    false,
+    };
+  });
+}
+
+const MOCK_HISTORY = [
+  { date:'04월 04일 금', items:5, weather:'맑음 18°C', accuracy:91 },
+  { date:'04월 03일 목', items:4, weather:'구름 15°C', accuracy:85 },
+  { date:'04월 02일 수', items:5, weather:'비 12°C',   accuracy:88 },
+  { date:'04월 01일 화', items:4, weather:'맑음 16°C', accuracy:82 },
+  { date:'03월 31일 월', items:5, weather:'흐림 13°C', accuracy:79 },
+  { date:'03월 28일 금', items:5, weather:'맑음 20°C', accuracy:93 },
+  { date:'03월 27일 목', items:4, weather:'비 10°C',   accuracy:83 },
+];
+
+// 발주 이력 (탭용)
+const MOCK_ORDER_HIST = [
+  { date:'04월 04일 금 08:01', status:'sent',
+    items:['삼겹살 10.2kg','목살 4.2kg','냉면면 5.1kg','된장 1.3kg','상추 2.2kg'],
+    total:'₩142,000', totalItems:5 },
+  { date:'04월 03일 목 08:00', status:'sent',
+    items:['삼겹살 9.5kg','목살 3.8kg','상추 2.0kg','냉면면 4.5kg'],
+    total:'₩126,000', totalItems:4 },
+  { date:'04월 02일 수 08:00', status:'sent',
+    items:['삼겹살 11.0kg','목살 4.5kg','냉면면 5.5kg','된장 1.5kg','상추 2.5kg'],
+    total:'₩158,000', totalItems:5 },
+  { date:'04월 01일 화 08:00', status:'sent',
+    items:['삼겹살 8.5kg','냉면면 4.0kg','상추 1.8kg','된장 1.0kg'],
+    total:'₩98,000', totalItems:4 },
+  { date:'03월 31일 월 08:00', status:'canceled',
+    items:['삼겹살 7.0kg','목살 3.0kg'],
+    total:'₩0', totalItems:2 },
+  { date:'03월 28일 금 08:00', status:'sent',
+    items:['삼겹살 13.5kg','목살 5.0kg','냉면면 7.0kg','된장 2.0kg','상추 3.0kg'],
+    total:'₩188,000', totalItems:5 },
+];
+
+// 재고 상태 — 앱 내 변경 가능
+let stockItems = [
+  { id:1, emoji:'🥩', name:'삼겹살',  qty:3.5, maxQty:15, unit:'kg', threshold:3 },
+  { id:2, emoji:'🍖', name:'목살',    qty:1.2, maxQty:8,  unit:'kg', threshold:2 },
+  { id:3, emoji:'🍜', name:'냉면면',  qty:4.0, maxQty:10, unit:'kg', threshold:2 },
+  { id:4, emoji:'🍲', name:'된장',    qty:0.5, maxQty:3,  unit:'kg', threshold:0.5 },
+  { id:5, emoji:'🥬', name:'상추',    qty:1.8, maxQty:5,  unit:'kg', threshold:1 },
+];
+let nextStockId = 6;
+let _addUnit  = 'kg';
+let _addEmoji = '🥩';
+
+let orders    = [];   // stockItems에서 파생, 아래 initOrders()로 채움
+let forecasts = [];
+let reservedOrders = []; // 예약 발주 목록
+
+function initOrders() {
+  orders = stockToOrders(stockItems);
+}
+
+// ══════════════════════════
+// Init
+// ══════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  initHeader();
+  initOrders();  // stockItems → orders 파생
+
+  // 카카오 SDK 앱 시작 시 자동 로드
+  if (_kakaoAppKey) {
+    loadKakaoSDK(_kakaoAppKey)
+      .then(() => {
+        _kakaoPS = new kakao.maps.services.Places();
+        console.log('[PICKO] 카카오 지도 준비 완료');
+      })
+      .catch(() => {});
+  }
+
+  setTimeout(() => {
+    loadForecast();
+    renderOrders();
+    renderHistory();
+    renderOrderHist();
+    renderStock();
+    renderReservedOrders();
+  }, 400);
+});
+
+// 매장 정보 상태 (앱 내 변경 가능)
+const storeInfo = {
+  name:     '대박삼겹살',
+  branch:   '종로점',
+  category: '고기구이',
+  address:  '',
+  lat:      37.5704,   // 기본: 서울 종로 좌표
+  lng:      126.9915,
+  placeId:  '',
+};
+
+// 위도·경도 → 기상청 격자 변환 (Lambert 투영법)
+function latlngToGrid(lat, lng) {
+  const RE = 6371.00877, GRID = 5.0, SLAT1 = 30.0, SLAT2 = 60.0;
+  const OLON = 126.0, OLAT = 38.0, XO = 43, YO = 136;
+  const DEGRAD = Math.PI / 180.0;
+  const re = RE / GRID;
+  const slat1 = SLAT1 * DEGRAD, slat2 = SLAT2 * DEGRAD;
+  const olon  = OLON  * DEGRAD, olat  = OLAT  * DEGRAD;
+  let sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+  sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+  let sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+  sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
+  let ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
+  ro = re * sf / Math.pow(ro, sn);
+  let ra = Math.tan(Math.PI * 0.25 + lat * DEGRAD * 0.5);
+  ra = re * sf / Math.pow(ra, sn);
+  let theta = lng * DEGRAD - olon;
+  if (theta > Math.PI) theta -= 2.0 * Math.PI;
+  if (theta < -Math.PI) theta += 2.0 * Math.PI;
+  theta *= sn;
+  return {
+    nx: Math.floor(ra * Math.sin(theta) + XO + 0.5),
+    ny: Math.floor(ro - ra * Math.cos(theta) + YO + 0.5),
+  };
+}
+
+function applyStoreInfo() {
+  document.getElementById('storeName').textContent    = storeInfo.name;
+  document.getElementById('profileName').textContent  = storeInfo.name;
+  document.getElementById('profileSub').textContent   = `${storeInfo.branch} · ${storeInfo.category}`;
+
+  const preview = `${storeInfo.name} · ${storeInfo.branch} · ${storeInfo.category}`;
+  const previewEl = document.getElementById('settingsStorePreview');
+  if (previewEl) previewEl.textContent = preview;
+
+  // 헤더 store-tag → 지점명
+  const tag = document.querySelector('.store-tag');
+  if (tag) tag.textContent = storeInfo.branch;
+
+  // 좌표가 있으면 기상청 격자 업데이트
+  if (storeInfo.lat && storeInfo.lng) {
+    const grid = latlngToGrid(storeInfo.lat, storeInfo.lng);
+    CFG.KMA_NX = grid.nx;
+    CFG.KMA_NY = grid.ny;
+    // 설정 화면 격자 표시 업데이트
+    const gridEls = document.querySelectorAll('.settings-value');
+    gridEls.forEach(el => {
+      if (el.textContent.startsWith('NX')) el.textContent = `NX ${grid.nx} · NY ${grid.ny}`;
+    });
+  }
+}
+
+let _storeEditing = false;
+
+function toggleStoreEdit() {
+  if (_storeEditing) { cancelStoreEdit(); return; }
+  _storeEditing = true;
+  // input 필드에 현재 값 채우기
+  document.getElementById('storeNameInput').value     = storeInfo.name;
+  document.getElementById('storeBranchInput').value   = storeInfo.branch;
+  document.getElementById('storeCategoryInput').value = storeInfo.category;
+  document.getElementById('storeAddressInput').value  = storeInfo.address || '';
+  // 검색 초기화
+  clearMapSelection(true);
+  initKakaoKeyUI();   // 카카오 앱키 상태 반영
+  const editSection = document.getElementById('storeEditSection');
+  editSection.style.display = 'block';
+  editSection.scrollIntoView({ behavior:'smooth', block:'start' });
+  const btn = document.getElementById('storeEditBtn');
+  btn.textContent = '취소';
+  btn.classList.add('editing');
+  setTimeout(() => {
+    const focusTarget = (_kakaoAppKey || _kakaoRestKey)
+      ? document.getElementById('mapSearchInput')
+      : document.getElementById('kakaoKeyInput');
+    focusTarget.focus();
+  }, 100);
+}
+
+function cancelStoreEdit() {
+  _storeEditing = false;
+  document.getElementById('storeEditSection').style.display = 'none';
+  clearMapSelection(true);
+  const btn = document.getElementById('storeEditBtn');
+  btn.textContent = '편집';
+  btn.classList.remove('editing');
+}
+
+function saveStoreEdit() {
+  const name     = document.getElementById('storeNameInput').value.trim();
+  const branch   = document.getElementById('storeBranchInput').value.trim();
+  const category = document.getElementById('storeCategoryInput').value.trim();
+  const address  = document.getElementById('storeAddressInput').value.trim();
+  const lat      = parseFloat(document.getElementById('storeLat').value) || storeInfo.lat;
+  const lng      = parseFloat(document.getElementById('storeLng').value) || storeInfo.lng;
+  if (!name) { toast('매장명을 입력해 주세요'); return; }
+  storeInfo.name     = name;
+  storeInfo.branch   = branch   || storeInfo.branch;
+  storeInfo.category = category || storeInfo.category;
+  storeInfo.address  = address;
+  storeInfo.lat      = lat;
+  storeInfo.lng      = lng;
+  applyStoreInfo();
+  cancelStoreEdit();
+  const grid = latlngToGrid(lat, lng);
+  toast(`✅ ${name} 저장됐어요 · 기상청 격자 NX${grid.nx}/NY${grid.ny}`);
+}
+
+// ══════════════════════════════════════════════
+// 카카오 장소 검색
+// 방법 A: JS SDK (앱키 연결 시)
+// 방법 B: REST API JSONP (앱키 연결 시)
+// 방법 C: 데모 모드 폴백 (앱키 없을 때)
+// ══════════════════════════════════════════════
+let _kakaoPS        = null;
+let _selectedPlace  = null;
+let _kakaoRestKey   = localStorage.getItem('picko_kakao_rest_key') || KAKAO_JS_KEY;
+let _jsonpCallbackN = 0;
+
+// 앱키 적용
+function applyKakaoKey() {
+  const key = document.getElementById('kakaoKeyInput').value.trim();
+  if (!key) { toast('앱키를 입력해 주세요'); return; }
+
+  // JavaScript 앱키로 SDK 로드 시도
+  _kakaoAppKey = key;
+  localStorage.setItem('picko_kakao_js_key', key);
+
+  const btn = document.querySelector('#kakaoKeySection .map-search-btn');
+  btn.textContent = '연결 중...';
+  btn.disabled    = true;
+
+  loadKakaoSDK(key)
+    .then(() => {
+      _kakaoPS = new kakao.maps.services.Places();
+      showKakaoConnected();
+      toast('✅ 카카오 지도 연결됐어요');
+    })
+    .catch(() => {
+      // JS SDK 실패 → REST API 키로 시도 (앱키 타입이 다를 수 있음)
+      _kakaoRestKey = key;
+      localStorage.setItem('picko_kakao_rest_key', key);
+      showKakaoConnected();
+      toast('✅ 카카오 REST API로 연결됐어요');
+    })
+    .finally(() => {
+      btn.textContent = '연결';
+      btn.disabled    = false;
+    });
+}
+
+function showKakaoConnected() {
+  document.getElementById('kakaoKeySection').style.display = 'none';
+  document.getElementById('kakaoKeyOk').style.display      = 'flex';
+}
+
+function resetKakaoKey() {
+  _kakaoAppKey = ''; _kakaoRestKey = ''; _kakaoPS = null;
+  localStorage.removeItem('picko_kakao_js_key');
+  localStorage.removeItem('picko_kakao_rest_key');
+  document.getElementById('kakaoKeyInput').value          = '';
+  document.getElementById('kakaoKeySection').style.display = 'block';
+  document.getElementById('kakaoKeyOk').style.display      = 'none';
+}
+
+// 설정 탭 열 때 키 상태 초기화
+function initKakaoKeyUI() {
+  if (_kakaoAppKey || _kakaoRestKey) {
+    showKakaoConnected();
+  } else {
+    document.getElementById('kakaoKeySection').style.display = 'block';
+    document.getElementById('kakaoKeyOk').style.display      = 'none';
+  }
+  // SDK 자동 로드
+  if (_kakaoAppKey && !_kakaoPS) {
+    loadKakaoSDK(_kakaoAppKey)
+      .then(() => {
+        _kakaoPS = new kakao.maps.services.Places();
+        console.log('[PICKO] 카카오 지도 SDK 로드 완료');
+      })
+      .catch(e => {
+        console.warn('[PICKO] SDK 로드 실패, REST 모드 사용:', e.message);
+      });
+  }
+}
+
+function searchPlace() {
+  const q = document.getElementById('mapSearchInput').value.trim();
+  if (!q) { toast('매장명을 입력해 주세요'); return; }
+
+  const results = document.getElementById('mapSearchResults');
+  results.style.display = 'block';
+  results.innerHTML = '<div class="map-search-loading"><div class="spin"></div><span style="font-size:12px;color:var(--text-4);margin-left:8px">검색 중...</span></div>';
+
+  // 방법 A: JS SDK
+  if (_kakaoPS) {
+    _kakaoPS.keywordSearch(q, (data, status) => {
+      if (status !== kakao.maps.services.Status.OK || !data.length) {
+        results.innerHTML = '<div class="map-search-empty">검색 결과가 없어요.<br>다른 검색어를 시도해 보세요.</div>';
+        return;
+      }
+      renderSearchResults(data.slice(0,8), q);
+    }, { size:8 });
+    return;
+  }
+
+  // 방법 B: REST API (JSONP)
+  if (_kakaoRestKey) {
+    const cbName = '__kakaoSearch' + (_jsonpCallbackN++);
+    window[cbName] = (res) => {
+      delete window[cbName];
+      document.head.removeChild(document.getElementById('kakao-jsonp'));
+      if (!res?.documents?.length) {
+        results.innerHTML = '<div class="map-search-empty">검색 결과가 없어요.<br>다른 검색어를 시도해 보세요.</div>';
+        return;
+      }
+      // REST API 응답 → JS SDK 형식으로 매핑
+      const mapped = res.documents.map(d => ({
+        place_name:        d.place_name,
+        road_address_name: d.road_address_name,
+        address_name:      d.address_name,
+        category_name:     d.category_name,
+        phone:             d.phone,
+        x: d.x, y: d.y,
+        place_url: d.place_url,
+      }));
+      renderSearchResults(mapped.slice(0,8), q);
+    };
+    const sc = document.createElement('script');
+    sc.id  = 'kakao-jsonp';
+    sc.src = `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(q)}&size=8&callback=${cbName}`;
+    sc.setAttribute('data-key', _kakaoRestKey);
+    // REST API는 Authorization 헤더가 필요해서 JSONP 불가 — 폴백으로
+    sc.onerror = () => { delete window[cbName]; simulateSearch(q); };
+    document.head.appendChild(sc);
+    // 타임아웃 2초 후 폴백
+    setTimeout(() => { if (window[cbName]) { delete window[cbName]; simulateSearch(q); } }, 2000);
+    return;
+  }
+
+  // 방법 C: 데모 모드
+  simulateSearch(q);
+}
+
+function renderSearchResults(places, query) {
+  const results = document.getElementById('mapSearchResults');
+  const highlight = (str) => str.replace(
+    new RegExp('(' + query.replace(/[.*+?^${}()|[\]\]/g,'\$&') + ')', 'gi'),
+    '<mark>$1</mark>'
+  );
+  const emoji = (cat) => {
+    if (!cat) return '🏪';
+    if (cat.includes('고기') || cat.includes('삼겹') || cat.includes('갈비')) return '🥩';
+    if (cat.includes('치킨') || cat.includes('닭')) return '🍗';
+    if (cat.includes('피자') || cat.includes('양식')) return '🍕';
+    if (cat.includes('중식') || cat.includes('중국')) return '🍜';
+    if (cat.includes('일식') || cat.includes('스시')) return '🍣';
+    if (cat.includes('분식') || cat.includes('떡볶이')) return '🍱';
+    if (cat.includes('카페') || cat.includes('커피')) return '☕';
+    if (cat.includes('베이커리') || cat.includes('빵')) return '🥐';
+    return '🏪';
+  };
+
+  results.innerHTML = places.map((p, i) => `
+    <div class="map-result-item" onclick="selectPlace(${i})">
+      <div class="mri-icon">${emoji(p.category_name)}</div>
+      <div class="mri-body">
+        <div class="mri-name">${highlight(p.place_name)}</div>
+        <div class="mri-addr">${p.road_address_name || p.address_name}</div>
+        ${p.category_name ? `<div class="mri-cat">${p.category_name.split('>').pop().trim()}</div>` : ''}
+      </div>
+    </div>`).join('');
+
+  // 전역에 검색 결과 보관
+  window._lastPlaces = places;
+}
+
+function selectPlace(idx) {
+  const p = window._lastPlaces?.[idx];
+  if (!p) return;
+
+  _selectedPlace = p;
+  const addr     = p.road_address_name || p.address_name;
+  const catRaw   = p.category_name || '';
+  const catShort = catRaw.split('>').pop().trim();
+  const lat      = parseFloat(p.y);
+  const lng      = parseFloat(p.x);
+
+  // input 자동 채우기
+  document.getElementById('storeNameInput').value     = p.place_name;
+  document.getElementById('storeAddressInput').value  = addr;
+  document.getElementById('storeCategoryInput').value = catShort || document.getElementById('storeCategoryInput').value;
+  document.getElementById('storeLat').value           = lat;
+  document.getElementById('storeLng').value           = lng;
+
+  // 지점명: 주소에서 자치구 or 동 추출
+  const branchGuess = extractBranch(addr, p.place_name);
+  if (branchGuess) document.getElementById('storeBranchInput').value = branchGuess;
+
+  // 선택 배너 표시
+  document.getElementById('mapSearchResults').style.display = 'none';
+  const banner = document.getElementById('mapSelectedBanner');
+  banner.style.display = 'flex';
+  document.getElementById('msbName').textContent = p.place_name;
+  const grid = latlngToGrid(lat, lng);
+  document.getElementById('msbDetail').innerHTML =
+    `📍 ${addr}<br>업종: ${catShort || '미분류'}<br>기상청 격자: NX ${grid.nx} / NY ${grid.ny}`;
+  document.getElementById('mapSearchInput').value = '';
+}
+
+// 주소에서 지점명 추출 (예: "서울 종로구" → "종로점")
+function extractBranch(addr, placeName) {
+  const guMatch = addr.match(/([가-힣]+구)/);
+  const dongMatch = addr.match(/([가-힣]+동)/);
+  const roadMatch = addr.match(/([가-힣]+로|[가-힣]+길)/);
+  if (guMatch)   return guMatch[1].replace('구','') + '점';
+  if (dongMatch) return dongMatch[1].replace('동','') + '점';
+  return '';
+}
+
+function clearMapSelection(quiet) {
+  _selectedPlace = null;
+  window._lastPlaces = [];
+  document.getElementById('mapSearchResults').style.display = 'none';
+  document.getElementById('mapSelectedBanner').style.display = 'none';
+  document.getElementById('mapSearchInput').value = '';
+  document.getElementById('storeLat').value = '';
+  document.getElementById('storeLng').value = '';
+  if (!quiet) toast('다시 검색해 주세요');
+}
+
+// 데모 모드 — 앱키 없이도 UI 체험 가능
+function simulateSearch(q) {
+  const results = document.getElementById('mapSearchResults');
+  // 검색어 기반으로 그럴듯한 데모 결과 생성
+  const locations = [
+    { gu:'종로구', dong:'종로', road:'종로 1길 10',   lat:'37.5704', lng:'126.9915' },
+    { gu:'중구',   dong:'을지로', road:'을지로 30',    lat:'37.5660', lng:'126.9826' },
+    { gu:'강남구', dong:'역삼동', road:'테헤란로 50',  lat:'37.5001', lng:'127.0368' },
+    { gu:'마포구', dong:'홍대',   road:'홍익로 5길 20',lat:'37.5563', lng:'126.9236' },
+    { gu:'서초구', dong:'반포동', road:'반포대로 58',  lat:'37.5045', lng:'127.0072' },
+  ];
+  const cats = ['음식점 > 한식 > 고기구이', '음식점 > 한식', '음식점 > 한식 > 삼겹살'];
+  const demos = locations.slice(0, 4).map((loc, i) => ({
+    place_name:        i === 0 ? q : `${q} ${loc.gu.replace('구','')}점`,
+    road_address_name: `서울 ${loc.gu} ${loc.road}`,
+    address_name:      `서울 ${loc.gu} ${loc.dong}`,
+    category_name:     cats[i % cats.length],
+    phone:             '',
+    y: loc.lat, x: loc.lng,
+  }));
+  setTimeout(() => {
+    renderSearchResults(demos, q);
+    // 데모 안내 배너
+    const notice = document.createElement('div');
+    notice.style.cssText = 'font-size:11px;color:var(--text-4);padding:8px 14px;text-align:center;border-top:1px solid var(--border)';
+    notice.textContent = '데모 데이터입니다 · 실제 검색은 카카오 앱키 연결 필요';
+    document.getElementById('mapSearchResults').appendChild(notice);
+  }, 500);
+}
+
+function initHeader() {
+  const h = new Date().getHours();
+  const greeting = h < 12 ? '좋은 아침이에요 👋' : h < 18 ? '안녕하세요 👋' : '수고하셨어요 🌙';
+  document.getElementById('greetingText').textContent = greeting;
+  applyStoreInfo();
+
+  const d = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  document.getElementById('todayMeta').textContent
+    = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${days[d.getDay()]}요일`;
+}
+
+// ══════════════════════════
+// Navigation
+// ══════════════════════════
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'  + page).classList.add('active');
+  document.getElementById('nav-'   + page).classList.add('active');
+}
+
+// ══════════════════════════
+// Weather
+// ══════════════════════════
+function renderWeather(w) {
+  const icon = w.pop > 60 ? '🌧' : w.pop > 30 ? '🌦' : w.skyDesc.includes('흐') ? '☁️' : w.skyDesc.includes('구름') ? '⛅' : '🌤';
+  document.getElementById('wxIconWrap').textContent = icon;
+  document.getElementById('wxTitle').textContent = `${w.skyDesc} ${w.temp}°C`;
+  document.getElementById('wxDesc').textContent  = `최고 ${w.tempMax}° / 최저 ${w.tempMin}° · 강수확률 ${w.pop}%`;
+
+  document.getElementById('weatherBanner').onclick = () => {
+    document.getElementById('drawerTitle').textContent = '오늘 날씨 상세';
+    document.getElementById('drawerSub').textContent   = '예측에 반영된 날씨 정보';
+    document.getElementById('drawerBody').innerHTML = `
+      <div class="drawer-row"><span class="dr-label">날씨</span><span class="dr-val">${w.skyDesc}</span></div>
+      <div class="drawer-row"><span class="dr-label">현재 기온</span><span class="dr-val">${w.temp}°C</span></div>
+      <div class="drawer-row"><span class="dr-label">최고 / 최저</span><span class="dr-val">${w.tempMax}° / ${w.tempMin}°</span></div>
+      <div class="drawer-row"><span class="dr-label">강수확률</span><span class="dr-val">${w.pop}%</span></div>
+      <div class="drawer-row"><span class="dr-label">풍속</span><span class="dr-val">${w.windSpeed} m/s</span></div>
+      <div class="drawer-row"><span class="dr-label">날씨 예측 영향</span><span class="dr-val" style="color:var(--green)">+5% 반영됨</span></div>
+    `;
+    openDrawer();
+  };
+}
+
+// ══════════════════════════
+// 기상청 API
+// ══════════════════════════
+function getKmaBaseDateTime() {
+  const now  = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  const tot = h * 60 + m;
+  const slots = [
+    {min:130,str:'0200'},{min:310,str:'0500'},{min:490,str:'0800'},
+    {min:670,str:'1100'},{min:850,str:'1400'},{min:1030,str:'1700'},
+    {min:1210,str:'2000'},{min:1390,str:'2300'},
+  ];
+  const p2 = n => String(n).padStart(2,'0');
+  let baseDate = `${now.getFullYear()}${p2(now.getMonth()+1)}${p2(now.getDate())}`;
+  const avail  = slots.filter(s => s.min <= tot);
+  let baseTime;
+  if (avail.length > 0) {
+    baseTime = avail[avail.length-1].str;
+  } else {
+    const yd = new Date(now); yd.setDate(yd.getDate()-1);
+    baseDate = `${yd.getFullYear()}${p2(yd.getMonth()+1)}${p2(yd.getDate())}`;
+    baseTime = '2300';
+  }
+  return { baseDate, baseTime };
+}
+
+async function fetchKmaWeather() {
+  const { baseDate, baseTime } = getKmaBaseDateTime();
+  const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst`
+    + `?serviceKey=${CFG.KMA_API_KEY}`
+    + `&numOfRows=1000&pageNo=1&dataType=JSON`
+    + `&base_date=${baseDate}&base_time=${baseTime}`
+    + `&nx=${CFG.KMA_NX}&ny=${CFG.KMA_NY}`;
+
+  console.log('[날씨] 요청 →', baseDate, baseTime);
+  const res  = await fetch(url);
+  const json = await res.json();
+  const rc   = json?.response?.header?.resultCode;
+  if (rc !== '00') throw new Error('resultCode=' + rc + ' ' + json?.response?.header?.resultMsg);
+
+  const items = json.response.body.items.item;
+  const tryTimes = ['1200','1500','0900','1800','0600'];
+  const pick = cat => {
+    for (const t of tryTimes) {
+      const f = items.find(i => i.category===cat && i.fcstTime===t);
+      if (f) return f.fcstValue;
+    }
+    return items.find(i => i.category===cat)?.fcstValue ?? null;
+  };
+
+  const tmp = Number(pick('TMP') ?? 18);
+  const sky = Number(pick('SKY') ?? 1);
+  const pty = Number(pick('PTY') ?? 0);
+  const pop = Number(pick('POP') ?? 0);
+  const wsd = Number(pick('WSD') ?? 2);
+  const tmx = Number(items.find(i=>i.category==='TMX')?.fcstValue ?? tmp+3);
+  const tmn = Number(items.find(i=>i.category==='TMN')?.fcstValue ?? tmp-5);
+  const skyDesc = pty===1?'비':pty===2?'비/눈':pty===3?'눈':pty===4?'소나기'
+    :sky<=1?'맑음':sky===3?'구름많음':'흐림';
+
+  console.log('[날씨] ✅', skyDesc, tmp+'°C', '강수'+pop+'%');
+  return { temp:tmp, tempMax:Math.round(tmx), tempMin:Math.round(tmn),
+           skyCode:sky, ptyCode:pty, skyDesc, pop, windSpeed:wsd };
+}
+
+function applyWeatherCorrection(base, w) {
+  return base.map(f => {
+    let wc=1, tc=1;
+    if (w.ptyCode===3)                         wc=0.78;
+    else if (w.ptyCode===1||w.ptyCode===4) wc = f.category==='메인'?0.87:0.91;
+    else if (w.pop>=70)  wc=0.92;
+    else if (w.pop>=50)  wc=0.96;
+    else if (w.skyCode===1) wc=1.05;
+
+    if (f.category==='메인') {
+      if (w.temp<=5) tc=1.13; else if(w.temp<=15) tc=1.06;
+      else if(w.temp>=32) tc=0.87; else if(w.temp>=28) tc=0.93;
+    } else {
+      if (w.temp>=30) tc=1.22; else if(w.temp>=25) tc=1.12;
+      else if(w.temp<=8) tc=0.85; else if(w.temp<=14) tc=0.93;
+    }
+    const newPred = Math.round(f.predicted * wc * tc);
+    const extra   = [
+      wc!==1 && `${w.skyDesc}(${pct(wc)})`,
+      Math.abs(tc-1)>0.02 && `기온${w.temp}°C(${pct(tc)})`,
+    ].filter(Boolean).join(' · ');
+    return { ...f, predicted:newPred,
+      factors:{...f.factors, weatherCoeff:round2(wc), tempCoeff:round2(tc)},
+      reason: extra ? extra+' · '+f.reason : f.reason };
+  });
+}
+
+// ══════════════════════════
+// Forecast
+// ══════════════════════════
+async function loadForecast() {
+  document.getElementById('fcList').innerHTML =
+    '<div class="loader"><div class="spin"></div><div class="loader-text">예측 계산 중</div></div>';
+
+  let weather = MOCK_WEATHER;
+  try {
+    weather = await fetchKmaWeather();
+    toast('🌤 실시간 날씨 반영 완료');
+  } catch(e) {
+    console.warn('[날씨] 폴백:', e.message);
+    toast('날씨 로딩 실패, 기본값 사용');
+  }
+
+  forecasts = applyWeatherCorrection(MOCK_FORECASTS, weather);
+  renderWeather(weather);
+
+  const avgConf = Math.round(forecasts.reduce((s,f) => s+f.confidence, 0) / forecasts.length);
+  document.getElementById('avgConf').textContent = avgConf;
+
+  document.getElementById('fcList').innerHTML = forecasts.map((f, i) => {
+    const badgeCls = f.trend==='up' ? 'badge-up' : f.trend==='down' ? 'badge-down' : 'badge-same';
+    const badgeTxt = f.trend==='up' ? '↑ 증가' : f.trend==='down' ? '↓ 감소' : '→ 보통';
+    const vs = f.predicted - f.lastWeekSameDay;
+    const vsStr = (vs>=0?'+':'') + vs;
+    const predColor = f.trend==='up' ? 'var(--red)' : f.trend==='down' ? 'var(--blue)' : 'var(--text-1)';
+    return `
+    <div class="fc-item" onclick="openFcDetail(${i})">
+      <div class="fc-icon-wrap ${f.category==='메인'?'ic-main':'ic-side'}">${f.emoji}</div>
+      <div class="fc-info">
+        <div class="fc-name">${f.name}</div>
+        <div class="fc-sub">신뢰도 ${f.confidence}% · ${f.category}</div>
+      </div>
+      <div class="fc-right">
+        <div class="fc-pred" style="color:${predColor}">${f.predicted}<span class="fc-unit">${f.unit}</span></div>
+        <span class="fc-badge ${badgeCls}">${badgeTxt} ${vsStr}${f.unit}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openFcDetail(i) {
+  const f = forecasts[i];
+  document.getElementById('drawerTitle').textContent = f.name + ' 예측 분석';
+  document.getElementById('drawerSub').textContent   = `오늘 예상 ${f.predicted}${f.unit} · 신뢰도 ${f.confidence}%`;
+
+  const fac = f.factors;
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="drawer-row"><span class="dr-label">오늘 예측</span><span class="dr-val" style="color:var(--blue);font-size:20px">${f.predicted} ${f.unit}</span></div>
+    <div class="drawer-row"><span class="dr-label">지난 동요일</span><span class="dr-val">${f.lastWeekSameDay} ${f.unit}</span></div>
+    <div class="drawer-row"><span class="dr-label">최근 7일 평균</span><span class="dr-val">${f.last7avg} ${f.unit}</span></div>
+    ${fac ? `
+    <div class="factor-card">
+      <div class="factor-title">예측 계수 분해</div>
+      ${factorRow('기준값', fac.base + f.unit, null)}
+      ${factorRow('요일 보정', fac.dayCoeff, fac.dayCoeff)}
+      ${factorRow('날씨 보정', fac.weatherCoeff, fac.weatherCoeff)}
+      ${factorRow('기온 보정', fac.tempCoeff, fac.tempCoeff)}
+      ${factorRow('추세 보정', fac.trendCoeff, fac.trendCoeff)}
+    </div>` : ''}
+    <div class="drawer-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <span class="dr-label">PICKO 예측 근거</span>
+      <span style="font-size:14px;color:var(--text-2);line-height:1.6">${f.reason}</span>
+    </div>
+  `;
+  openDrawer();
+}
+
+function factorRow(label, val, coeff) {
+  if (coeff === null) {
+    return `<div class="factor-row"><span class="factor-name">${label}</span><div class="factor-bar-bg"><div class="factor-bar-fill" style="width:50%;background:var(--border)"></div></div><span class="factor-coeff coeff-neu">${val}</span></div>`;
+  }
+  const cls = coeff > 1.02 ? 'coeff-pos' : coeff < 0.98 ? 'coeff-neg' : 'coeff-neu';
+  const col = coeff > 1.02 ? 'var(--red)' : coeff < 0.98 ? 'var(--blue)' : 'var(--border)';
+  const pct  = Math.min(100, Math.round((coeff - 0.7) / 0.65 * 100));
+  const txt  = '×' + val.toFixed(2);
+  return `<div class="factor-row"><span class="factor-name">${label}</span><div class="factor-bar-bg"><div class="factor-bar-fill" style="width:${pct}%;background:${col}"></div></div><span class="factor-coeff ${cls}">${txt}</span></div>`;
+}
+
+// ══════════════════════════
+// Orders
+// ══════════════════════════
+function renderOrders() {
+  const isSent      = orderState === ORDER_STATE.SENT;
+  const isConfirmed = orderState === ORDER_STATE.CONFIRMED;
+  const isDraft     = orderState === ORDER_STATE.DRAFT;
+
+  document.getElementById('orderList').innerHTML = orders.map((o, i) => {
+    const isEdited  = o.qty !== o.aiQty;
+    const qtyColor  = isEdited ? 'color:var(--blue)' : (isSent ? 'color:var(--green)' : '');
+    const editBadge = isEdited
+      ? `<div class="order-edit-badge">수정됨 (AI: ${fmtQty(o.aiQty)}${o.unit})</div>` : '';
+
+    // 힌트 텍스트
+    let hint = '';
+    if (isSent) {
+      hint = `<div class="locked-hint">발송 완료 · 수정 불가</div>`;
+    } else if (isConfirmed) {
+      hint = `<div class="locked-hint" style="color:#9a6c00">확정됨 · 수정하기 탭</div>`;
+    } else {
+      hint = `<div class="locked-hint">탭하여 조절</div>`;
+    }
+
+    // 잠금 여부
+    const clickable = !isSent;
+    const itemClass = isSent ? 'order-item locked' : 'order-item';
+    const clickAttr = clickable
+      ? `onclick="openQtyDrawerIfAllowed(${i})"` : '';
+    const chkClick  = clickable
+      ? `onclick="event.stopPropagation(); toggleChk(${i})"` : '';
+
+    // 발주 확정 체크 아이콘 (확정/발송 상태)
+    const statusIcon = isSent
+      ? `<div style="color:var(--green);font-size:18px;flex-shrink:0">✓</div>`
+      : isConfirmed
+        ? `<div style="color:#f5c842;font-size:16px;flex-shrink:0">●</div>`
+        : '';
+
+    return `
+    <div class="${itemClass}" ${clickAttr}>
+      ${statusIcon || `<div class="order-chk ${o.checked?'on':''}" id="chk-${i}" ${chkClick}></div>`}
+      <div class="order-icon">${o.emoji}</div>
+      <div class="order-info">
+        <div class="order-name">${o.ingredient}</div>
+        <div class="order-sub">${o.supplier} · 신뢰도 ${o.confidence}%</div>
+      </div>
+      <div class="order-amount">
+        <div class="order-qty-row">
+          <div class="order-qty" style="${qtyColor}">${fmtQty(o.qty)}</div>
+          <div class="order-unit-txt">${o.unit}</div>
+        </div>
+        ${editBadge}
+        ${hint}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openQtyDrawerIfAllowed(i) {
+  if (orderState === ORDER_STATE.SENT) {
+    toast('발송이 완료되어 수정할 수 없어요');
+    return;
+  }
+  if (orderState === ORDER_STATE.CONFIRMED) {
+    // confirmed 상태에서도 드로어 열기는 허용 (수정하기 버튼 없이)
+  }
+  openQtyDrawer(i);
+}
+
+function toggleChk(i) {
+  orders[i].checked = !orders[i].checked;
+  const el = document.getElementById('chk-' + i);
+  el.classList.toggle('on', orders[i].checked);
+}
+
+// ══════════════════════════
+// 수량 조절 드로어
+// ══════════════════════════
+let _qtyIdx   = -1;   // 현재 편집 중인 품목 인덱스
+let _qtyTemp  = 0;    // 임시 수량값
+
+function openQtyDrawer(i) {
+  const o     = orders[i];
+  _qtyIdx     = i;
+  _qtyTemp    = o.qty;
+
+  // 헤더
+  document.getElementById('qtyDrawerTitle').textContent = o.ingredient + ' 발주량 조절';
+  document.getElementById('qtyDrawerSub').textContent   = `${o.supplier} · 신뢰도 ${o.confidence}%`;
+  document.getElementById('qtyAiRec').textContent       = `${o.aiQty} ${o.unit}`;
+  document.getElementById('qtyUnit').textContent        = o.unit;
+
+  // 프리셋 버튼 생성: AI 추천 ±30/60/100%
+  const ai   = o.aiQty;
+  const step = o.step;
+  const presets = [
+    { label: 'AI 추천',    val: ai },
+    { label: '-30%',       val: Math.max(step, roundStep(ai * 0.7, step)) },
+    { label: '+30%',       val: roundStep(ai * 1.3, step) },
+    { label: '+50%',       val: roundStep(ai * 1.5, step) },
+  ];
+  document.getElementById('qtyPresets').innerHTML = presets.map(p => `
+    <button class="qty-preset-btn ${p.val === _qtyTemp ? 'active' : ''}"
+            onclick="setQtyPreset(${p.val})">${p.label}<br>
+      <span style="font-size:11px;font-weight:400;color:inherit;opacity:.8">${p.val}${o.unit}</span>
+    </button>`).join('');
+
+  updateQtyDisplay();
+  document.getElementById('qtyDrawer').classList.add('open');
+}
+
+function closeQtyDrawer() {
+  document.getElementById('qtyDrawer').classList.remove('open');
+  _qtyIdx = -1;
+}
+
+function stepQty(dir) {
+  const o    = orders[_qtyIdx];
+  const step = o.step;
+  _qtyTemp   = fmtQty(Math.max(step, roundStep(_qtyTemp + dir * step, step)));
+  updateQtyDisplay();
+  syncPresetHighlight();
+}
+
+function setQtyPreset(val) {
+  _qtyTemp = val;
+  updateQtyDisplay();
+  syncPresetHighlight();
+}
+
+function updateQtyDisplay() {
+  const o    = orders[_qtyIdx];
+  const isAi = _qtyTemp === o.aiQty;
+  document.getElementById('qtyNum').textContent = fmtQty(_qtyTemp);
+  document.getElementById('qtyNum').style.color = isAi ? 'var(--text-1)' : 'var(--blue)';
+  document.getElementById('qtyMinus').disabled  = _qtyTemp <= o.step;
+}
+
+function syncPresetHighlight() {
+  const o = orders[_qtyIdx];
+  const ai   = o.aiQty, step = o.step;
+  const vals = [ai, Math.max(step, roundStep(ai*0.7,step)), roundStep(ai*1.3,step), roundStep(ai*1.5,step)];
+  document.querySelectorAll('.qty-preset-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', vals[idx] === _qtyTemp);
+  });
+}
+
+function applyQty() {
+  if (_qtyIdx < 0) return;
+  const idx  = _qtyIdx;
+  const name = orders[idx].ingredient;
+  const unit = orders[idx].unit;
+  orders[idx].qty = _qtyTemp;
+  closeQtyDrawer();
+  renderOrders();
+
+  if (orderState === ORDER_STATE.CONFIRMED) {
+    toast(`✏️ ${name} ${_qtyTemp}${unit} · 재확정 버튼을 눌러주세요`);
+    // confirmed → draft로 되돌려 재확정 유도
+    orderState = ORDER_STATE.DRAFT;
+    clearInterval(_timerInterval);
+    syncOrderUI();
+  } else {
+    toast(`✅ ${name} ${_qtyTemp}${unit} 반영됐어요`);
+  }
+}
+
+function roundStep(val, step) {
+  return Math.round(val / step) * step;
+}
+
+// ══════════════════════════════════════
+// 발주 상태 머신
+// 상태: draft → confirmed → sent
+// ══════════════════════════════════════
+const ORDER_STATE = {
+  DRAFT:     'draft',
+  CONFIRMED: 'confirmed',
+  SENT:      'sent',
+};
+
+let orderState     = ORDER_STATE.DRAFT;
+let confirmedAt    = null;   // 확정 시각 (Date)
+let sendScheduledAt = null;  // 발송 예정 시각 (Date)
+let _timerInterval = null;   // 카운트다운 인터벌
+
+/** 다음 오전 8시 계산 */
+function getNextSendTime() {
+  const now  = new Date();
+  const next = new Date(now);
+  next.setHours(8, 0, 0, 0);
+  if (now >= next) next.setDate(next.getDate() + 1); // 이미 8시 지났으면 내일
+  return next;
+}
+
+/** 남은 시간 문자열 */
+function formatTimeLeft(target) {
+  const diff = target - new Date();
+  if (diff <= 0) return '00:00:00';
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  const p = n => String(n).padStart(2,'0');
+  return `${p(h)}:${p(m)}:${p(s)}`;
+}
+
+/** 상태 배너 + CTA + 아이템 UI 동기화 */
+function syncOrderUI() {
+  const banner = document.getElementById('orderStatusBanner');
+  const btn    = document.getElementById('ctaBtn');
+
+  if (orderState === ORDER_STATE.DRAFT) {
+    banner.className = 'order-status-banner osb-draft';
+    banner.innerHTML = `
+      <div class="osb-icon">📋</div>
+      <div class="osb-body">
+        <div class="osb-title">발주 대기 중</div>
+        <div class="osb-desc">아래 수량을 확인하고 발주를 확정해 주세요</div>
+      </div>`;
+    btn.textContent = '발주 확정하기';
+    btn.className   = 'cta-btn';
+    btn.disabled    = false;
+
+  } else if (orderState === ORDER_STATE.CONFIRMED) {
+    const timeLeft = formatTimeLeft(sendScheduledAt);
+    banner.className = 'order-status-banner osb-confirmed';
+    banner.innerHTML = `
+      <div class="osb-icon">✅</div>
+      <div class="osb-body">
+        <div class="osb-title">발주 확정됨 · 수정 가능</div>
+        <div class="osb-desc">발송 전까지 수량을 변경할 수 있어요</div>
+        <div class="osb-timer">
+          <div class="osb-timer-dot"></div>
+          발송까지 <span id="timerDisplay">${timeLeft}</span>
+        </div>
+      </div>
+      <button class="osb-edit-btn" onclick="revertToDraft()">수정하기</button>`;
+    btn.textContent = '발주 재확정하기';
+    btn.className   = 'cta-btn confirmed-state';
+    btn.disabled    = false;
+
+  } else if (orderState === ORDER_STATE.SENT) {
+    banner.className = 'order-status-banner osb-sent';
+    banner.innerHTML = `
+      <div class="osb-icon">🚚</div>
+      <div class="osb-body">
+        <div class="osb-title">발주 발송 완료</div>
+        <div class="osb-desc">공급업체에 발주가 전달되었습니다 · 수정 불가</div>
+      </div>`;
+    btn.textContent = '발송 완료';
+    btn.className   = 'cta-btn sent-state';
+    btn.disabled    = true;
+  }
+
+  renderOrders();
+}
+
+/** CTA 버튼 클릭 핸들러 */
+function handleCtaClick() {
+  if (orderState === ORDER_STATE.DRAFT)     confirmOrder();
+  else if (orderState === ORDER_STATE.CONFIRMED) reconfirmOrder();
+}
+
+/** 발주 확정 */
+async function confirmOrder() {
+  const btn = document.getElementById('ctaBtn');
+  btn.textContent = '저장 중...';
+  btn.disabled    = true;
+
+  if (!CFG.MOCK) {
+    await fetch(CFG.SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'addOrder', items: orders }),
+    }).catch(() => {});
+  }
+  await delay(1200);
+
+  confirmedAt     = new Date();
+  sendScheduledAt = getNextSendTime();
+  orderState      = ORDER_STATE.CONFIRMED;
+
+  toast('✅ 발주가 확정됐어요! 발송 전까지 수정 가능합니다');
+  syncOrderUI();
+  startCountdown();
+}
+
+/** 발주 재확정 (수정 후 다시 확정) */
+async function reconfirmOrder() {
+  const btn = document.getElementById('ctaBtn');
+  btn.textContent = '재확정 중...';
+  btn.disabled    = true;
+
+  if (!CFG.MOCK) {
+    await fetch(CFG.SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'addOrder', items: orders }),
+    }).catch(() => {});
+  }
+  await delay(800);
+
+  toast('🔄 발주 수량이 업데이트됐어요');
+  syncOrderUI();
+}
+
+/** 수정하기 → draft 복귀 */
+function revertToDraft() {
+  orderState = ORDER_STATE.DRAFT;
+  clearInterval(_timerInterval);
+  syncOrderUI();
+  toast('✏️ 수량을 다시 조절할 수 있어요');
+}
+
+/** 카운트다운 타이머 시작 */
+function startCountdown() {
+  clearInterval(_timerInterval);
+  _timerInterval = setInterval(() => {
+    if (orderState !== ORDER_STATE.CONFIRMED) {
+      clearInterval(_timerInterval);
+      return;
+    }
+    const now  = new Date();
+    // 발송 시각 도달 → 자동 잠금
+    if (now >= sendScheduledAt) {
+      clearInterval(_timerInterval);
+      orderState = ORDER_STATE.SENT;
+      syncOrderUI();
+      toast('🚚 발주가 공급업체에 발송됐습니다');
+      return;
+    }
+    const el = document.getElementById('timerDisplay');
+    if (el) el.textContent = formatTimeLeft(sendScheduledAt);
+  }, 1000);
+}
+
+// ══════════════════════════
+// 세그먼트 스위처
+// ══════════════════════════
+function switchOrderSeg(seg) {
+  ['today','hist'].forEach(s => {
+    document.getElementById('seg-' + s).classList.toggle('active', s === seg);
+    document.getElementById('order-panel-' + s).style.display = s === seg ? 'block' : 'none';
+  });
+}
+
+function switchHistSeg(seg) {
+  ['stock','ordlog'].forEach(s => {
+    document.getElementById('seg-' + s).classList.toggle('active', s === seg);
+    document.getElementById('hist-panel-' + s).style.display = s === seg ? 'block' : 'none';
+  });
+}
+
+// ══════════════════════════
+// History (발주 적중률 기록)
+// ══════════════════════════
+function renderHistory() {
+  document.getElementById('histList').innerHTML = MOCK_HISTORY.map(h => {
+    const col = h.accuracy >= 90 ? 'var(--red)' : h.accuracy >= 80 ? 'var(--blue)' : 'var(--text-3)';
+    return `
+    <div class="hist-item">
+      <div class="hist-icon">📦</div>
+      <div class="hist-info">
+        <div class="hist-date">${h.date}</div>
+        <div class="hist-meta">${h.items}개 품목 · ${h.weather}</div>
+      </div>
+      <div class="hist-right">
+        <div class="acc-num" style="color:${col}">${h.accuracy}%</div>
+        <div class="acc-lbl">적중률</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════
+// 발주 이력 렌더
+// ══════════════════════════
+function renderOrderHist() {
+  document.getElementById('orderHistList').innerHTML = MOCK_ORDER_HIST.map(h => {
+    const isSent = h.status === 'sent';
+    const statusIcon = isSent ? '✓' : '✕';
+    const statusCls  = isSent ? 'ohist-sent' : 'ohist-canceled';
+    const badgeCls   = isSent ? 'ob-sent' : 'ob-canceled';
+    const badgeTxt   = isSent ? '발송 완료' : '취소됨';
+    const preview    = h.items.slice(0,2).join(', ') + (h.items.length > 2 ? ` 외 ${h.items.length-2}건` : '');
+    return `
+    <div class="ohist-item" onclick="openOrderHistDetail(${MOCK_ORDER_HIST.indexOf(h)})">
+      <div class="ohist-status ${statusCls}">${statusIcon}</div>
+      <div class="ohist-body">
+        <div class="ohist-date">${h.date}</div>
+        <div class="ohist-items">${preview}</div>
+      </div>
+      <div class="ohist-right">
+        <div class="ohist-total">${h.total}</div>
+        <span class="ohist-badge ${badgeCls}">${badgeTxt}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openOrderHistDetail(idx) {
+  const h = MOCK_ORDER_HIST[idx];
+  document.getElementById('drawerTitle').textContent = h.date + ' 발주';
+  document.getElementById('drawerSub').textContent   = `${h.totalItems}개 품목 · ${h.total}`;
+  document.getElementById('drawerBody').innerHTML = h.items.map(it => `
+    <div class="drawer-row"><span class="dr-label">${it.split(' ')[0]}</span><span class="dr-val">${it.split(' ')[1] || ''}</span></div>`
+  ).join('') + `<div class="drawer-row"><span class="dr-label">상태</span><span class="dr-val" style="color:${h.status==='sent'?'var(--green)':'var(--red)'}">${h.status==='sent'?'발송 완료':'취소됨'}</span></div>`;
+  openDrawer();
+}
+
+// ══════════════════════════
+// 재고 관리
+// ══════════════════════════
+function getStockStatus(item) {
+  const ratio = item.qty / item.threshold;
+  if (item.qty <= 0)              return { cls:'sb-low',  txt:'재고 없음', barColor:'var(--red)',    barPct:2 };
+  if (item.qty < item.threshold)  return { cls:'sb-low',  txt:'부족',     barColor:'var(--red)',    barPct: Math.round(item.qty/item.maxQty*100) };
+  if (ratio < 2)                  return { cls:'sb-warn', txt:'주의',     barColor:'var(--orange)', barPct: Math.round(item.qty/item.maxQty*100) };
+  return                                 { cls:'sb-ok',   txt:'충분',     barColor:'var(--green)',  barPct: Math.round(Math.min(100,item.qty/item.maxQty*100)) };
+}
+
+function renderStock() {
+  const lowCount = stockItems.filter(i => i.qty < i.threshold).length;
+  const okCount  = stockItems.filter(i => i.qty >= i.threshold).length;
+  document.getElementById('stockAlertCount').textContent = lowCount;
+  document.getElementById('stockOkCount').textContent    = okCount;
+  document.getElementById('stockTotalCount').textContent = stockItems.length;
+
+  document.getElementById('stockList').innerHTML = stockItems.map(item => {
+    const st = getStockStatus(item);
+    return `
+    <div class="stock-item">
+      <div class="stock-icon">${item.emoji}</div>
+      <div class="stock-info">
+        <div class="stock-name">${item.name}</div>
+        <div class="stock-sub">기준 재고 ${item.threshold}${item.unit} · 최대 ${item.maxQty}${item.unit}</div>
+        <div class="stock-level-bar">
+          <div class="stock-level-fill" style="width:${st.barPct}%;background:${st.barColor}"></div>
+        </div>
+      </div>
+      <div class="stock-right">
+        <div class="stock-input-wrap">
+          <input class="stock-input" type="number" min="0" step="0.1"
+            value="${fmtQty(item.qty)}" id="stock-qty-${item.id}"
+            oninput="previewStock(${item.id}, this.value)" />
+          <span class="stock-unit-lbl">${item.unit}</span>
+        </div>
+        <span class="stock-badge ${st.cls}">${st.txt}</span>
+      </div>
+      <button class="stock-del-btn" onclick="deleteStockItem(${item.id})" title="삭제">×</button>
+    </div>`;
+  }).join('');
+}
+
+function previewStock(id, val) {
+  const item = stockItems.find(i => i.id === id);
+  if (!item) return;
+  item.qty = fmtQty(Math.max(0, parseFloat(val) || 0));
+  const st  = getStockStatus(item);
+  const row = document.getElementById('stock-qty-' + id)?.closest('.stock-item');
+  if (!row) return;
+  const badge  = row.querySelector('.stock-badge');
+  const fill   = row.querySelector('.stock-level-fill');
+  badge.className = 'stock-badge ' + st.cls;
+  badge.textContent = st.txt;
+  fill.style.width = st.barPct + '%';
+  fill.style.background = st.barColor;
+  // 요약 카운트 갱신
+  const lowCount = stockItems.filter(i => i.qty < i.threshold).length;
+  document.getElementById('stockAlertCount').textContent = lowCount;
+  document.getElementById('stockOkCount').textContent    = stockItems.length - lowCount;
+}
+
+function deleteStockItem(id) {
+  const item = stockItems.find(i => i.id === id);
+  stockItems = stockItems.filter(i => i.id !== id);
+  orders     = stockToOrders(stockItems);   // 발주 품목 동기화
+  renderStock();
+  renderOrders();
+  toast(`🗑 ${item?.name || ''} 품목이 삭제됐어요`);
+}
+
+function saveAllStock() {
+  // 모든 input 값을 stockItems에 반영
+  stockItems.forEach(item => {
+    const el = document.getElementById('stock-qty-' + item.id);
+    if (el) item.qty = fmtQty(Math.max(0, parseFloat(el.value) || 0));
+  });
+  renderStock();
+  toast('✅ 재고 현황이 저장됐어요');
+}
+
+// ── 품목 추가 드로어 ──
+function openAddStockItem() {
+  document.getElementById('addItemName').value = '';
+  document.getElementById('addItemQty').value  = '';
+  _addUnit  = 'kg';
+  _addEmoji = '🥩';
+  document.querySelectorAll('.unit-opt').forEach((b,i)  => b.classList.toggle('active', i===0));
+  document.querySelectorAll('.emoji-opt').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.getElementById('addUnitDisplay').textContent = 'kg';
+  document.getElementById('addStockDrawer').classList.add('open');
+}
+
+function closeAddStockItem() {
+  document.getElementById('addStockDrawer').classList.remove('open');
+}
+
+function selectUnit(btn, unit) {
+  _addUnit = unit;
+  document.querySelectorAll('.unit-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('addUnitDisplay').textContent = unit;
+}
+
+function selectEmoji(btn, emoji) {
+  _addEmoji = emoji;
+  document.querySelectorAll('.emoji-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function confirmAddStockItem() {
+  const name = document.getElementById('addItemName').value.trim();
+  const qty  = fmtQty(parseFloat(document.getElementById('addItemQty').value) || 0);
+  if (!name) { toast('품목명을 입력해 주세요'); return; }
+  stockItems.push({
+    id:        nextStockId++,
+    emoji:     _addEmoji,
+    name,
+    qty,
+    maxQty:    fmtQty(Math.max(qty * 3, 10)),
+    unit:      _addUnit,
+    threshold: fmtQty(Math.max(qty * 0.3, 0.5)),
+  });
+  orders = stockToOrders(stockItems);    // 발주 품목 동기화
+  closeAddStockItem();
+  renderStock();
+  renderOrders();
+  toast(`✅ ${name} 추가됐어요 · 발주 품목도 업데이트됐어요`);
+}
+
+// ══════════════════════════
+// 예약 발주
+// ══════════════════════════
+let _reserveDate = null;
+
+function openReserveDrawer() {
+  // 날짜 기본값: 내일
+  const tom = new Date();
+  tom.setDate(tom.getDate() + 1);
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = `${tom.getFullYear()}-${pad(tom.getMonth()+1)}-${pad(tom.getDate())}`;
+  document.getElementById('reserveDate').value = dateStr;
+  document.getElementById('reserveDate').min   = dateStr;
+  document.getElementById('reserveAiSection').style.display = 'none';
+  document.getElementById('reserveAlertList').innerHTML     = '';
+  document.getElementById('reserveApplyBtn').disabled       = true;
+  renderStockAlerts();
+  document.getElementById('reserveDrawer').classList.add('open');
+}
+
+function closeReserveDrawer() {
+  document.getElementById('reserveDrawer').classList.remove('open');
+}
+
+// 날짜 선택 시 AI 예측 계산
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('reserveDate').addEventListener('change', function() {
+    const val = this.value;
+    if (!val) return;
+    _reserveDate = new Date(val);
+    calcReservePrediction(_reserveDate);
+    document.getElementById('reserveApplyBtn').disabled = false;
+  });
+});
+
+// AI 예약발주량 계산 — 날짜 기반 요일/소진 예측
+function calcReservePrediction(targetDate) {
+  const days    = ['일','월','화','수','목','금','토'];
+  const dayName = days[targetDate.getDay()];
+  const dow     = targetDate.getDay();
+  const isWeekend = dow === 5 || dow === 6;
+
+  // 날짜까지 남은 일수
+  const diffDays = Math.ceil((targetDate - new Date()) / 86400000);
+
+  // 각 품목의 소진 예상 + 발주 추천량 계산
+  const recs = stockItems.map(item => {
+    // 일일 평균 소모량 (maxQty의 6~8%)
+    const dailyUse  = fmtQty(item.maxQty * (isWeekend ? 0.08 : 0.06));
+    // 발주일까지 소모 예상량
+    const willUse   = fmtQty(dailyUse * diffDays);
+    // 발주일 시점 예상 재고
+    const stockAtDate = fmtQty(Math.max(0, item.qty - willUse));
+    // 필요 발주량 = 70% 목표 - 발주일 예상재고, 안전재고 10% 추가
+    const needed    = fmtQty(Math.max(0, item.maxQty * 0.7 - stockAtDate) * 1.1);
+    // 소진 예상일 계산
+    const daysLeft  = dailyUse > 0 ? Math.floor(item.qty / dailyUse) : 999;
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + daysLeft);
+    const expiryStr  = daysLeft < 99 ? `${expiryDate.getMonth()+1}/${expiryDate.getDate()} 소진` : '충분';
+
+    const prevNeeded = orders.find(o => o.ingredient === item.name)?.aiQty || 0;
+    const diff       = fmtQty(needed - prevNeeded);
+
+    return { ...item, needed, stockAtDate, daysLeft, expiryStr, diff, dailyUse };
+  });
+
+  // 배너 업데이트
+  const sec = document.getElementById('reserveAiSection');
+  sec.style.display = 'block';
+  document.getElementById('raiTitle').textContent =
+    `${dayName}요일 발주 예측 (D+${diffDays})`;
+  document.getElementById('raiDesc').textContent  =
+    `${diffDays}일 후 기준 재고 소진량을 계산했어요. ${isWeekend?'주말 특수(+30%)':'평일 기준'}으로 예측합니다.`;
+
+  // 품목 목록
+  document.getElementById('reserveItemList').innerHTML = recs.map(r => {
+    const cls = r.diff > 0 ? 'rc-up' : r.diff < 0 ? 'rc-down' : 'rc-same';
+    const diffTxt = r.diff > 0 ? `+${r.diff}${r.unit}` : r.diff < 0 ? `${r.diff}${r.unit}` : '동일';
+    return `
+    <div class="reserve-item">
+      <span class="ri-icon">${r.emoji}</span>
+      <span class="ri-name">${r.name}<br><span style="font-size:11px;color:var(--text-4);font-weight:400">${r.expiryStr}</span></span>
+      <div class="ri-qty">${r.needed}<span class="ri-unit">${r.unit}</span></div>
+      <span class="ri-change ${cls}">${diffTxt}</span>
+    </div>`;
+  }).join('');
+}
+
+// 소진 임박 알림 렌더 (드로어 하단)
+function renderStockAlerts() {
+  const days = ['일','월','화','수','목','금','토'];
+  const alerts = stockItems.map(item => {
+    const dailyUse = item.maxQty * 0.065;
+    const daysLeft = dailyUse > 0 ? Math.floor(item.qty / dailyUse) : 999;
+    if (daysLeft > 7) return null;
+    const urgency  = daysLeft <= 1 ? '⚠️ 오늘 소진 예상' : daysLeft <= 3 ? '🔶 3일 내 소진' : '🔔 1주일 내 소진';
+    return { item, daysLeft, urgency };
+  }).filter(Boolean).sort((a,b) => a.daysLeft - b.daysLeft);
+
+  const el = document.getElementById('reserveAlertList');
+  if (!alerts.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="add-field-label" style="margin-bottom:8px;margin-top:4px">소진 임박 품목</div>
+    ${alerts.map(a => `
+    <div class="reserve-alert">
+      <span class="ra-icon">${a.item.emoji}</span>
+      <span class="ra-text"><strong>${a.item.name}</strong> · ${a.urgency} · 현재 ${fmtQty(a.item.qty)}${a.item.unit} 남음</span>
+    </div>`).join('')}`;
+}
+
+// 예약발주 확정
+function applyReserveOrder() {
+  if (!_reserveDate) return;
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = `${_reserveDate.getMonth()+1}월 ${_reserveDate.getDate()}일`;
+  const days    = ['일','월','화','수','목','금','토'];
+  const dayName = days[_reserveDate.getDay()];
+  const diffDays= Math.ceil((_reserveDate - new Date()) / 86400000);
+
+  // 각 품목 추천량 수집
+  const recs = stockItems.map(item => {
+    const dailyUse    = fmtQty(item.maxQty * 0.065);
+    const willUse     = fmtQty(dailyUse * diffDays);
+    const stockAtDate = fmtQty(Math.max(0, item.qty - willUse));
+    const needed      = fmtQty(Math.max(0, item.maxQty * 0.7 - stockAtDate) * 1.1);
+    return `${item.name} ${needed}${item.unit}`;
+  });
+
+  const reserved = {
+    id: Date.now(),
+    date: _reserveDate,
+    dateStr: `${dateStr} (${dayName})`,
+    items: recs,
+    diffDays,
+  };
+
+  reservedOrders.unshift(reserved);
+  closeReserveDrawer();
+  renderReservedOrders();
+  toast(`📅 ${dateStr} 예약발주가 등록됐어요`);
+}
+
+// 예약발주 목록 렌더
+function renderReservedOrders() {
+  const sec  = document.getElementById('reservedOrdersSection');
+  const list = document.getElementById('reservedOrdersList');
+  if (!reservedOrders.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  list.innerHTML = reservedOrders.map(r => `
+    <div class="reserved-item">
+      <span style="font-size:18px">📅</span>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:3px">${r.dateStr}</div>
+        <div style="font-size:12px;color:var(--text-4)">${r.items.slice(0,3).join(' · ')}${r.items.length>3?' 외 '+(r.items.length-3)+'건':''}</div>
+      </div>
+      <span class="ri-date-badge">D-${r.diffDays}</span>
+      <button class="ri-cancel-btn" onclick="cancelReservedOrder(${r.id})">×</button>
+    </div>`).join('');
+}
+
+function cancelReservedOrder(id) {
+  reservedOrders = reservedOrders.filter(r => r.id !== id);
+  renderReservedOrders();
+  toast('예약발주가 취소됐어요');
+}
+
+// ══════════════════════════
+// Drawer
+// ══════════════════════════
+function openDrawer()  { document.getElementById('drawer').classList.add('open'); }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); }
+
+// ══════════════════════════
+// Toast
+// ══════════════════════════
+let _tt;
+function toast(msg) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function delay(ms)  { return new Promise(r => setTimeout(r, ms)); }
+// 소수점 2째 자리에서 절삭 (floor)
+function round2(n)  { return Math.floor(n * 10) / 10; }
+// 수량 표시용 포맷 — 소수점 1자리 절삭
+function fmtQty(n)  { return round2(parseFloat(n) || 0); }
+function pct(coeff) { const d = Math.round((coeff-1)*100); return (d>=0?'+':'')+d+'%'; }
+</script>
+</body>
+</html>
