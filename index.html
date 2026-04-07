@@ -996,7 +996,7 @@ function loadKakaoSDK(appkey) {
       <div class="store-greeting" id="greetingText">좋은 아침이에요 👋</div>
       <div class="store-name-row">
         <div class="store-name" id="storeName">대박삼겹살</div>
-        <div class="store-tag">종로점</div>
+        <div class="store-tag">목동점</div>
       </div>
       <div class="store-meta" id="todayMeta">--</div>
       <div class="today-summary">
@@ -1204,7 +1204,7 @@ function loadKakaoSDK(appkey) {
       <div class="profile-avatar">🏪</div>
       <div style="flex:1">
         <div class="profile-name" id="profileName">대박삼겹살</div>
-        <div class="profile-sub" id="profileSub">종로점 · 고기구이</div>
+        <div class="profile-sub" id="profileSub">목동점 · 고기구이</div>
       </div>
       <button class="profile-edit-btn" id="storeEditBtn" onclick="toggleStoreEdit()">편집</button>
     </div>
@@ -1254,6 +1254,21 @@ function loadKakaoSDK(appkey) {
               <div class="msb-detail" id="msbDetail"></div>
               <div class="msb-change" onclick="clearMapSelection()">다시 검색하기</div>
             </div>
+          </div>
+          <!-- 미니 지도 -->
+          <div id="miniMapWrap" style="display:none;margin-top:10px;border-radius:var(--radius-md);overflow:hidden;height:200px;background:var(--bg)">
+            <div id="miniMap" style="width:100%;height:100%"></div>
+          </div>
+        </div>
+
+        <!-- 현재 위치 지도 (편집 모드 시 기본 표시) -->
+        <div style="margin-bottom:12px">
+          <div class="add-field-label" style="margin-bottom:8px">현재 매장 위치</div>
+          <div id="currentMapWrap" style="border-radius:var(--radius-md);overflow:hidden;height:180px;background:var(--bg)">
+            <div id="currentMap" style="width:100%;height:100%"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-4);margin-top:6px" id="currentMapAddress">
+            서울 양천구 목동로 186 · NX 55 / NY 126
           </div>
         </div>
 
@@ -1576,8 +1591,8 @@ const CFG = {
 
   // 기상청 API — 브라우저에서 직접 호출 (CORS 허용됨)
   KMA_API_KEY: 'Ek25WvxX9%2FAQCJwrRRHvHDQgWCA03UPI7ZtD83xxK50iqSbWwcjGpxtMphM%2BZ8GItlVBYtxoEryE%2FiVDso0bxw%3D%3D',
-  KMA_NX: 60,   // 서울 종로 격자
-  KMA_NY: 127,
+  KMA_NX: 55,   // 서울 양천구 목동 격자
+  KMA_NY: 126,
 
   MOCK: false,  // false = 실제 기상청 API 사용
 };
@@ -1711,6 +1726,10 @@ document.addEventListener('DOMContentLoaded', () => {
           console.warn('[PICKO] Places 초기화 실패:', e.message);
         }
       });
+  // 기상청 격자를 목동 좌표로 초기 설정
+  const initGrid = latlngToGrid(storeInfo.lat, storeInfo.lng);
+  CFG.KMA_NX = initGrid.nx;
+  CFG.KMA_NY = initGrid.ny;
   }
 
   setTimeout(() => {
@@ -1726,11 +1745,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // 매장 정보 상태 (앱 내 변경 가능)
 const storeInfo = {
   name:     '대박삼겹살',
-  branch:   '종로점',
+  branch:   '목동점',
   category: '고기구이',
-  address:  '',
-  lat:      37.5704,   // 기본: 서울 종로 좌표
-  lng:      126.9915,
+  address:  '서울 양천구 목동로 186',
+  lat:      37.5257,   // 서울 양천구 목동로 186
+  lng:      126.8742,
   placeId:  '',
 };
 
@@ -1786,6 +1805,79 @@ function applyStoreInfo() {
   }
 }
 
+// ══════════════════════════
+// 카카오 지도 렌더링
+// ══════════════════════════
+let _currentMapObj = null;
+let _miniMapObj    = null;
+let _currentMarker = null;
+let _miniMarker    = null;
+
+function initCurrentMap() {
+  if (typeof kakao === 'undefined' || !kakao.maps) return;
+  const el = document.getElementById('currentMap');
+  if (!el || _currentMapObj) return;
+  const coords = new kakao.maps.LatLng(storeInfo.lat, storeInfo.lng);
+  _currentMapObj = new kakao.maps.Map(el, {
+    center: coords, level: 3,
+    draggable: true, scrollwheel: true,
+  });
+  _currentMarker = new kakao.maps.Marker({ position: coords, map: _currentMapObj });
+  // 클릭으로 위치 변경 가능
+  kakao.maps.event.addListener(_currentMapObj, 'click', function(e) {
+    const latlng = e.latLng;
+    _currentMarker.setPosition(latlng);
+    document.getElementById('storeLat').value = latlng.getLat();
+    document.getElementById('storeLng').value = latlng.getLng();
+    const grid = latlngToGrid(latlng.getLat(), latlng.getLng());
+    document.getElementById('currentMapAddress').textContent =
+      `위도 ${latlng.getLat().toFixed(4)} / 경도 ${latlng.getLng().toFixed(4)} · NX ${grid.nx} / NY ${grid.ny}`;
+  });
+  updateCurrentMapAddress();
+}
+
+function updateCurrentMap(lat, lng) {
+  if (!_currentMapObj) return;
+  const coords = new kakao.maps.LatLng(lat, lng);
+  _currentMapObj.setCenter(coords);
+  _currentMarker.setPosition(coords);
+  updateCurrentMapAddress();
+}
+
+function updateCurrentMapAddress() {
+  const grid = latlngToGrid(storeInfo.lat, storeInfo.lng);
+  const el = document.getElementById('currentMapAddress');
+  if (el) el.textContent =
+    (storeInfo.address || `위도 ${storeInfo.lat} / 경도 ${storeInfo.lng}`)
+    + ` · NX ${grid.nx} / NY ${grid.ny}`;
+}
+
+function showMiniMap(lat, lng, name) {
+  if (typeof kakao === 'undefined' || !kakao.maps) return;
+  const wrap = document.getElementById('miniMapWrap');
+  wrap.style.display = 'block';
+  const el     = document.getElementById('miniMap');
+  const coords = new kakao.maps.LatLng(lat, lng);
+  if (!_miniMapObj) {
+    _miniMapObj = new kakao.maps.Map(el, { center: coords, level: 3, draggable: false });
+    _miniMarker = new kakao.maps.Marker({ position: coords, map: _miniMapObj });
+    // 말풍선 라벨
+    const overlay = new kakao.maps.CustomOverlay({
+      position: coords,
+      content: `<div style="background:#3182f6;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;white-space:nowrap">${name}</div>`,
+      yAnchor: 2.8,
+      map: _miniMapObj,
+    });
+  } else {
+    _miniMapObj.setCenter(coords);
+    _miniMarker.setPosition(coords);
+  }
+}
+
+function hideMiniMap() {
+  document.getElementById('miniMapWrap').style.display = 'none';
+}
+
 let _storeEditing = false;
 
 function toggleStoreEdit() {
@@ -1802,6 +1894,12 @@ function toggleStoreEdit() {
   const editSection = document.getElementById('storeEditSection');
   editSection.style.display = 'block';
   editSection.scrollIntoView({ behavior:'smooth', block:'start' });
+  // 현재 위치 지도 렌더
+  setTimeout(() => {
+    if (typeof kakao !== 'undefined' && kakao.maps) {
+      initCurrentMap();
+    }
+  }, 200);
   const btn = document.getElementById('storeEditBtn');
   btn.textContent = '취소';
   btn.classList.add('editing');
@@ -2043,6 +2141,10 @@ function selectPlace(idx) {
   document.getElementById('msbDetail').innerHTML =
     `📍 ${addr}<br>업종: ${catShort || '미분류'}<br>기상청 격자: NX ${grid.nx} / NY ${grid.ny}`;
   document.getElementById('mapSearchInput').value = '';
+  // 미니 지도에 선택 위치 표시
+  showMiniMap(lat, lng, p.place_name);
+  // 현재 위치 지도도 이동
+  updateCurrentMap(lat, lng);
 }
 
 // 주소에서 지점명 추출 (예: "서울 종로구" → "종로점")
@@ -2063,6 +2165,7 @@ function clearMapSelection(quiet) {
   document.getElementById('mapSearchInput').value = '';
   document.getElementById('storeLat').value = '';
   document.getElementById('storeLng').value = '';
+  hideMiniMap();
   if (!quiet) toast('다시 검색해 주세요');
 }
 
